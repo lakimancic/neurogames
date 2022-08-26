@@ -1,4 +1,5 @@
 import * as consts from './constants.js';
+import NeuralNetwork from '../../../js/NeuralNetwork/Network.js';
 
 export default class Bird {
     /**
@@ -28,6 +29,34 @@ export default class Bird {
         this.pressedKeys = pressedKeys;
         this.prevPressedKeys = pressedKeys;
         this.control = control;
+
+        this.fitness = 0;
+        this.score = 0;
+
+        if(this.control === 'ai') {
+            this.age = 0;
+
+            this.brain = new NeuralNetwork([
+                { size: 3 },
+                { size: 6, activation: 'sigmoid' },
+                { size: 1, activation: 'sigmoid' }
+            ]);
+        }
+    }
+
+    restart(x, y) {
+        this.x = x;
+        this.y = y;
+
+        this.vx = 0;
+        this.vy = 0;
+
+        this.angle = 0;
+
+        this.frame = 0;
+        this.frameCounter = 0;
+
+        this.alive = true;
 
         this.fitness = 0;
         this.score = 0;
@@ -144,5 +173,42 @@ export default class Bird {
         if(d <= r) return true;
 
         return false;
+    }
+    /**
+     * 
+     * @param {Bird} bird 
+     */
+    mate(bird) {
+        let child = new Bird(this.canvas, this.ctx, this.sprites, this.pressedKeys, this.x, this.y, this.control);
+
+        for(let i=0;i<this.brain.levels.length;i++) {
+            for(let j=0;j<this.brain.levels[i].weights.length; j++) {
+                for(let k=0;k<this.brain.levels[i].weights[j].length; k++) {
+                    let chance = Math.random() * 100;
+                    if(chance <= 50) {
+                        child.brain.levels[i].weights[j][k] = bird.brain.levels[i].weights[j][k];
+                    } else {
+                        child.brain.levels[i].weights[j][k] = this.brain.levels[i].weights[j][k]
+                    }
+                    if(Math.random() * 100 < 5) {
+                        child.brain.levels[i].weights[j][k] += Math.random() * 2 - 1;
+                    }
+                }
+            }
+
+            for(let j=0;j<this.brain.levels[i].biases;j++) {
+                let chance = Math.random() * 100;
+                if(chance <= 50) {
+                    child.brain.levels[i].biases[j] = bird.brain.levels[i].biases[j];
+                } else {
+                    child.brain.levels[i].biases[j] = this.brain.levels[i].biases[j];
+                }
+                if(Math.random() * 100 < 5) {
+                    child.brain.levels[i].biases[j] += Math.random() * 2 - 1;
+                }
+            }
+        }
+
+        return child;
     }
 }

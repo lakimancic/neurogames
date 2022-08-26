@@ -67,8 +67,6 @@ export default class Game {
     run() {
         this.loop = true;
 
-        this.state = new GameState(this.canvas, this.ctx, this.sprites, this.pressedKeys);
-
         let lastUpdate = Date.now();
 
         addEventListener('keydown', e => this.pressedKeys[e.key] = true );
