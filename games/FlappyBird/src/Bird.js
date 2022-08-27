@@ -1,5 +1,7 @@
 import * as consts from './constants.js';
 import NeuralNetwork from '../../../js/NeuralNetwork/Network.js';
+import Crossover from '../../../js/GeneticAlgorithm/Crossover.js';
+import Mutation from '../../../js/GeneticAlgorithm/Mutation.js';
 
 export default class Bird {
     /**
@@ -40,6 +42,8 @@ export default class Bird {
 
     setNeuralNet(nn) {
         this.brain = new NeuralNetwork(nn);
+
+        this.nn = nn;
     }
 
     restart(x, y) {
@@ -176,34 +180,42 @@ export default class Bird {
      * 
      * @param {Bird} bird 
      */
-    mate(bird) {
+    mate(bird, mutationType, mutationChance, crossoverType) {
         let child = new Bird(this.canvas, this.ctx, this.sprites, this.pressedKeys, this.x, this.y, this.control);
+        child.setNeuralNet(this.nn);
 
         for(let i=0;i<this.brain.levels.length;i++) {
             for(let j=0;j<this.brain.levels[i].weights.length; j++) {
+                let crossover = new Crossover(crossoverType, this.brain.levels[i].weights[j].length);
                 for(let k=0;k<this.brain.levels[i].weights[j].length; k++) {
-                    let chance = Math.random() * 100;
-                    if(chance <= 50) {
-                        child.brain.levels[i].weights[j][k] = bird.brain.levels[i].weights[j][k];
-                    } else {
-                        child.brain.levels[i].weights[j][k] = this.brain.levels[i].weights[j][k]
-                    }
-                    if(Math.random() * 100 < 5) {
-                        child.brain.levels[i].weights[j][k] += Math.random() * 2 - 1;
-                    }
+                    // let chance = Math.random() * 100;
+                    // if(chance <= 50) {
+                    //     child.brain.levels[i].weights[j][k] = bird.brain.levels[i].weights[j][k];
+                    // } else {
+                    //     child.brain.levels[i].weights[j][k] = this.brain.levels[i].weights[j][k]
+                    // }
+                    // if(Math.random() * 100 < 5) {
+                    //     child.brain.levels[i].weights[j][k] += Math.random() * 2 - 1;
+                    // }
+                    child.brain.levels[i].weights[j][k] = crossover.choose(bird.brain.levels[i].weights[j][k], this.brain.levels[i].weights[j][k], k)[0];
+
+                    child.brain.levels[i].weights[j][k] = Mutation[mutationType](child.brain.levels[i].weights[j][k], mutationChance);
                 }
             }
+            let crossover = new Crossover(crossoverType, this.brain.levels[i].biases.length);
+            for(let j=0;j<this.brain.levels[i].biases.length;j++) {
+                // let chance = Math.random() * 100;
+                // if(chance <= 50) {
+                //     child.brain.levels[i].biases[j] = bird.brain.levels[i].biases[j];
+                // } else {
+                //     child.brain.levels[i].biases[j] = this.brain.levels[i].biases[j];
+                // }
+                // if(Math.random() * 100 < 5) {
+                //     child.brain.levels[i].biases[j] += Math.random() * 2 - 1;
+                // }
+                child.brain.levels[i].biases[j] = crossover.choose(bird.brain.levels[i].biases[j], this.brain.levels[i].biases[j], j)[0];
 
-            for(let j=0;j<this.brain.levels[i].biases;j++) {
-                let chance = Math.random() * 100;
-                if(chance <= 50) {
-                    child.brain.levels[i].biases[j] = bird.brain.levels[i].biases[j];
-                } else {
-                    child.brain.levels[i].biases[j] = this.brain.levels[i].biases[j];
-                }
-                if(Math.random() * 100 < 5) {
-                    child.brain.levels[i].biases[j] += Math.random() * 2 - 1;
-                }
+                child.brain.levels[i].biases[j] = Mutation[mutationType](child.brain.levels[i].biases[j], mutationChance);
             }
         }
 

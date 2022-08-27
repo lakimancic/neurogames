@@ -70,11 +70,11 @@ export default {
         shuffle(indeces);
 
         let first = indeces.slice(0, half);
-        let max1 = Math.max(first.map(k => population[k].fitness));
+        let max1 = Math.max(...first.map(k => population[k].fitness));
         let i = first.find(k => population[k].fitness === max1);
 
         let second = indeces.slice(half);
-        let max2 = Math.max(second.map(k => population[k].fitness));
+        let max2 = Math.max(...second.map(k => population[k].fitness));
         let j = second.find(k => population[k].fitness === max2);
 
         return [i, j];

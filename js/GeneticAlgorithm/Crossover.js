@@ -11,7 +11,7 @@ export default class Crossover{
             for(let i=0;i<=Math.sqrt(this.length);i++) {
                 let newInd = Math.floor(Math.random() * this.length);
 
-                while(this.points.findIndex(newInd) !== -1) newInd = Math.floor(Math.random() * this.length);
+                while(this.points.findIndex(j => j === newInd) !== -1) newInd = Math.floor(Math.random() * this.length);
             }
 
             this.points.sort((a, b) => a - b);
@@ -20,7 +20,7 @@ export default class Crossover{
 
     choose(value1, value2, ind) {
         let newValue1, newValue2;
-        if(type === 'onep') {
+        if(this.type === 'onep') {
             if(ind < this.point) {
                 newValue1 = value1;
                 newValue2 = value2;
@@ -28,7 +28,7 @@ export default class Crossover{
                 newValue1 = value2;
                 newValue2 = value1;
             }
-        } else if(type === 'multip') {
+        } else if(this.type === 'multip') {
             let i = 0;
 
             while(ind < this.points[i]) i++;
@@ -40,7 +40,7 @@ export default class Crossover{
                 newValue1 = value2;
                 newValue2 = value1;
             }
-        } else if(type === 'unif') {
+        } else if(this.type === 'unif') {
             if(Math.random() > 0.5) {
                 newValue1 = value1;
                 newValue2 = value2;
@@ -53,5 +53,7 @@ export default class Crossover{
             newValue1 = value1 * alpha + value2 * (1 - alpha);
             newValue2 = value2 * alpha + value1 * (1 - alpha);
         }
+
+        return [newValue1, newValue2];
     }
 };

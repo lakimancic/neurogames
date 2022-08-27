@@ -141,6 +141,8 @@ document.getElementById('save_nn').onclick = () => {
     game.state.neuralNet = pomNN;
 
     document.getElementById('nn_options').style.removeProperty('display');
+
+    game.state.resetNeuroEvolution();
 };
 document.getElementById('discard_nn').onclick = () => {
     document.getElementById('nn_options').style.removeProperty('display');
@@ -180,7 +182,7 @@ document.getElementById('save_ga').onclick = () => {
 
     document.getElementById('ga_options').style.removeProperty('display');
 
-    console.log(game.state.evolution);
+    game.state.resetNeuroEvolution();
 };
 
 document.getElementById('ga_button').onclick = openEvolutionOptions;
@@ -230,7 +232,7 @@ document.getElementById('set_mut').onclick = () => {
         return;
     }
 
-    pomEvObj.mutationChance = document.getElementById("mutation_chance").value;
+    pomEvObj.mutationChance = Number(document.getElementById("mutation_chance").value);
 
     updateGAData();
 };
@@ -244,13 +246,17 @@ document.getElementById('fit').onchange = () => {
 };
 
 document.getElementById('surviv').onchange = () => {
-    pomEvObj.survivorPer = document.getElementById('surviv').value;
+    pomEvObj.survivorPer = Number(document.getElementById('surviv').value);
 
     updateGAData();
 };
 
 document.getElementById('surviv').onmousemove = () => {
-    pomEvObj.survivorPer = document.getElementById('surviv').value;
+    pomEvObj.survivorPer = Number(document.getElementById('surviv').value);
 
     document.getElementById('surv_per').innerHTML = `${pomEvObj.survivorPer}%`;
 };
+
+document.getElementById('start_game').onclick = () => {
+    game.state.gameOn = true;
+}
