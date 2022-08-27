@@ -17,17 +17,22 @@ html {
 
 $color-dark-1: #1e1e1e;
 $color-dark-2: #252526;
+$color-dark-2-50: rgba(37, 37, 38, 0.5);
 $color-dark-3: #2d2d30;
 $color-dark-4: #3e3e42;
 $color-dark-4-80: rgba(62, 62, 66, 0.8);
 $color-light-1: #e1e1e1;
 $color-light-2: #dadad9;
+$color-light-2-50: rgba(218, 218, 217, 0.5);
 $color-light-3: #d2d2cf;
 $color-light-4: #c1c1bd;
 $color-light-4-80: rgba(193, 193, 189, 0.8);
 $color-blue: #007acc;
 $color-light-blue: #589ecd;
 $color-orange: #ff8533;
+$color-red: #d9534f;
+$color-green: #5cb85c;
+$color-yellow: #f0ad4e;
 $transition: background 1s, color 1s;
 $dark-shadow: 0 0 10px 6px rgba(30, 30, 30, 0.5);
 $light-shadow: 0 0 10px 6px rgba(225, 225, 225, 0.15);
@@ -100,6 +105,56 @@ body {
 
                 transition: $transition;
             }
+
+            .menu {
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+
+                list-style: none;
+
+                button {
+                    background-color: $color-blue;
+                    color: $color-light-1;
+
+                    padding: 0.5rem 1.5rem;
+                    border-radius: 0.5rem;
+
+                    font-size: 1.5rem;
+
+                    border: 0;
+
+                    cursor: pointer;
+
+                    i {
+                        cursor: inherit;
+
+                        position: relative;
+
+                        font-size: 1em;
+                        padding: 0.5rem;
+                    }
+
+                    &.start {
+                        background-color: $color-green;
+                    }
+
+                    &.stop {
+                        background-color: $color-red;
+                    }
+
+                    &.pause {
+                        background-color: $color-yellow;
+                    }
+
+                    &:disabled {
+                        opacity: 0.6;
+                        filter: grayscale(0.5);
+
+                        cursor: not-allowed;
+                    }
+                }
+            }
         }
     }
 
@@ -113,6 +168,278 @@ body {
 
         #myCanvas {
             background-color: white;
+        }
+
+        .container {
+            flex: 1;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            height: 100%;
+        }
+    }
+
+    .options_container {
+        width: 100%;
+        height: 100%;
+
+        position: fixed;
+        top: 0;
+
+        background-color: $color-light-2-50;
+
+        display: none;
+        justify-content: center;
+        align-items: center;
+
+        .options {
+
+            width: 55rem;
+            max-width: 90%;
+            min-height: 20rem;
+            max-height: 50%;
+
+            border-radius: 2rem;
+
+            background-color: $color-light-1;
+            box-shadow: $dark-shadow;
+
+            overflow-y: scroll;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            button:hover {
+                filter: brightness(1.1);
+            }
+
+            h1 {
+                margin: 2rem;
+
+                text-align: center;
+
+                font-size: 2.5rem;
+
+                .fa-solid {
+                    font-size: 2rem;
+    
+                    margin: 0 0.5rem;
+                }
+            }
+
+            h2 {
+                font-size: 2rem;
+
+                text-align: center;
+
+                margin: 2rem;
+            }
+
+            p.error {
+                color: $color-red;
+
+                margin: 1rem 0;
+
+                text-align: center;
+
+                font-size: 1.5rem;
+            }
+
+            .row {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+
+                margin: 2rem;
+
+                font-size: 1.5rem;
+
+                .num {
+                    font-size: 1.6rem;
+                    font-weight: 600;
+
+                    color: $color-blue;
+                }
+
+                input {
+                    background-color: $color-blue;
+                    color: $color-light-1;
+
+                    border: 0;
+                    border-radius: 0.3rem;
+
+                    padding: 0.5rem 1rem;
+
+                    font-size: 1.5rem;
+
+                    &::placeholder {
+                        color: $color-light-2;
+                    }
+
+                    &#neurons_num {
+                        width: 10rem;
+                    }
+
+                    &#population_num {
+                        width: 12rem;
+                    }
+                }
+
+                select, button {
+                    background-color: $color-blue;
+                    color: $color-light-1;
+
+                    border: 0;
+                    border-radius: 0.3rem;
+
+                    padding: 0.5rem 1rem;
+
+                    font-size: 1.5rem;
+                }
+
+                button {
+                    cursor: pointer;
+                }
+            }
+
+            .layers {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                margin: 2rem 0;
+
+                .layer {
+                    position: relative;
+
+                    width: 80%;
+
+                    padding: 1rem;
+
+                    font-size: 1.8rem;
+
+                    border: 0.1rem solid $color-blue;
+
+                    i {
+                        position: absolute;
+
+                        right: 1rem;
+
+                        color: $color-red;
+
+                        cursor: pointer;
+                    }
+
+                    .num {
+                        color: $color-orange;
+                    }
+
+                    select {
+                        background-color: $color-light-2;
+
+                        border: 0;
+
+                        color: $color-dark-1;
+
+                        padding: 0.1rem 0.5rem;
+                    }
+                }
+            }
+
+            .buttons {
+                display: flex;
+                justify-content: center;
+                gap: 2rem;
+
+                margin: 2rem 0;
+
+                button {
+                    border: 0;
+                    border-radius: 0.5rem;
+
+                    padding: 0.6rem 2rem;
+
+                    font-size: 1.5rem;
+
+                    color: $color-light-1;
+
+                    cursor: pointer;
+
+                    &.save {
+                        background-color: $color-green;
+                    }
+
+                    &.discard {
+                        background-color: $color-red;
+                    }
+                }
+            }
+
+            .cb_con {
+                display: flex;
+                justify-content: center;
+
+                font-size: 1.5rem;
+
+                label {
+                    margin-left: 1rem;
+                }
+            }
+
+            .rb_con {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+
+                font-size: 1.5rem;
+
+                margin: 2rem 0;
+
+                input[type=radio] {
+                    margin-left: 1.5rem;
+                }
+            }
+
+            .range_con {
+                justify-content: center;
+
+                #surviv {
+                    -webkit-appearance: none;
+                    width: 80%;
+                    height: 2rem;
+
+                    opacity: 0.7;
+
+                    background-color: $color-light-4;
+                    border-radius: 0;
+
+                    padding: 0;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+
+                    &::-webkit-slider-thumb {
+                        -webkit-appearance: none;
+                        appearance: none;
+    
+                        width: 2rem;
+                        height: 2rem;
+    
+                        background-color: $color-blue;
+                    }
+
+                    &::-moz-range-thumb{
+                        width: 2rem;
+                        height: 2rem;
+    
+                        background-color: $color-blue;
+                    }
+                }
+            }
         }
     }
 }
@@ -137,5 +464,30 @@ body {
 
         }
 
+    }
+
+    .options_container {
+        background-color: $color-dark-2-50;
+
+        .options {
+            background-color: $color-dark-1;
+            box-shadow: $light-shadow;
+
+            .layers {
+                .layer {
+                    select {
+                        background-color: $color-dark-2;
+                        color: $color-light-1;
+                    }
+                }
+            }
+
+            .range_con {
+
+                #surviv {
+                    background-color: $color-dark-4;
+                }
+            }
+        }
     }
 }

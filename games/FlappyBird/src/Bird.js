@@ -35,13 +35,11 @@ export default class Bird {
 
         if(this.control === 'ai') {
             this.age = 0;
-
-            this.brain = new NeuralNetwork([
-                { size: 3 },
-                { size: 6, activation: 'sigmoid' },
-                { size: 1, activation: 'sigmoid' }
-            ]);
         }
+    }
+
+    setNeuralNet(nn) {
+        this.brain = new NeuralNetwork(nn);
     }
 
     restart(x, y) {

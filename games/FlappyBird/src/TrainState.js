@@ -22,6 +22,27 @@ export default class TrainState {
         this.scale = this.canvas.width / this.sprites.background.width;
 
         this.saveObj = JSON.parse(localStorage.getItem('flappybird')) || {};
+
+        this.neuralNet = [
+            { size: 2 },
+            { size: 1, activation: 'relu' }
+        ];
+
+        this.evolution = {
+            population: 0,
+            parentSel: 'roulette',
+            crossover: 'onep',
+            mutation: 'reset',
+            mutationChance: 1,
+            survivorSel: 'fitness',
+            survivorPer: 40
+        };
+    }
+
+    resetNeuralNets() {
+        this.population.forEach(i => {
+            i.setNeuralNet(this.neuralNet);
+        });
     }
 
     init() {
@@ -29,9 +50,9 @@ export default class TrainState {
 
         this.population = [];
 
-        for(let i=0;i<50;i++) {
-            this.population[i] = new Bird(this.canvas, this.ctx, this.sprites, this.pressedKeys, 50, (this.sprites.background.height - this.sprites.ground.height) / 2, 'ai');
-        }
+        // for(let i=0;i<50;i++) {
+        //     this.population[i] = new Bird(this.canvas, this.ctx, this.sprites, this.pressedKeys, 50, (this.sprites.background.height - this.sprites.ground.height) / 2, 'ai');
+        // }
 
         this.pipes = [];
         
@@ -40,7 +61,7 @@ export default class TrainState {
         this.ground1_x = 0;
         this.ground2_x = this.sprites.ground.width;
 
-        this.gameOn = true;
+        this.gameOn = false;
         this.gameOver = false;
     }
 
@@ -90,15 +111,16 @@ export default class TrainState {
             let inputs = [];
             for(let i=0;i<this.pipes.length;i++) {
                 if(bird.x < this.pipes[i].x + consts.GAP / 2) {
-                    inputs.push((this.pipes[i].x + consts.GAP / 2 - bird.x));
+                    inputs.push((this.pipes[i].x - bird.x));
                     inputs.push(this.pipes[i].y - bird.y);
-                    inputs.push(this.pipes[i+1].y - bird.y);
+                    // inputs.push((this.pipes[i+1].x + consts.GAP / 2 - bird.x));
+                    // inputs.push(this.pipes[i+1].y - bird.y);
                     break;
                 }
             }
     
             let outputs = bird.brain.feedForward(inputs);
-            if(outputs[0] > 0.5) {
+            if(outputs[0] > 0) {
                 if(bird.alive) bird.jump();
             }
 
@@ -123,7 +145,7 @@ export default class TrainState {
                     this.pipes.push(new Pipe(this.canvas, this.ctx, this.sprites, this.pipes[this.pipes.length - 1].x + consts.PIPES_GAP));
                 }
             }
-        } else {
+        } else if(this.gameOn) {
             // New generation
 
             let newPopulation = [];

@@ -58,6 +58,41 @@ body header .welcome h2 {
   color: #1e1e1e;
   transition: background 1s, color 1s;
 }
+body header .welcome .menu {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+}
+body header .welcome .menu button {
+  background-color: #007acc;
+  color: #e1e1e1;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  border: 0;
+  cursor: pointer;
+}
+body header .welcome .menu button i {
+  cursor: inherit;
+  position: relative;
+  font-size: 1em;
+  padding: 0.5rem;
+}
+body header .welcome .menu button.start {
+  background-color: #5cb85c;
+}
+body header .welcome .menu button.stop {
+  background-color: #d9534f;
+}
+body header .welcome .menu button.pause {
+  background-color: #f0ad4e;
+}
+body header .welcome .menu button:disabled {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+  cursor: not-allowed;
+}
 body main {
   width: 100%;
   height: calc(100vh - 10rem);
@@ -67,6 +102,198 @@ body main {
 }
 body main #myCanvas {
   background-color: white;
+}
+body main .container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+body .options_container {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  background-color: rgba(218, 218, 217, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+body .options_container .options {
+  width: 55rem;
+  max-width: 90%;
+  min-height: 20rem;
+  max-height: 50%;
+  border-radius: 2rem;
+  background-color: #e1e1e1;
+  box-shadow: 0 0 10px 6px rgba(30, 30, 30, 0.5);
+  overflow-y: scroll;
+}
+body .options_container .options::-webkit-scrollbar {
+  display: none;
+}
+body .options_container .options button:hover {
+  filter: brightness(1.1);
+}
+body .options_container .options h1 {
+  margin: 2rem;
+  text-align: center;
+  font-size: 2.5rem;
+}
+body .options_container .options h1 .fa-solid {
+  font-size: 2rem;
+  margin: 0 0.5rem;
+}
+body .options_container .options h2 {
+  font-size: 2rem;
+  text-align: center;
+  margin: 2rem;
+}
+body .options_container .options p.error {
+  color: #d9534f;
+  margin: 1rem 0;
+  text-align: center;
+  font-size: 1.5rem;
+}
+body .options_container .options .row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem;
+  font-size: 1.5rem;
+}
+body .options_container .options .row .num {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #007acc;
+}
+body .options_container .options .row input {
+  background-color: #007acc;
+  color: #e1e1e1;
+  border: 0;
+  border-radius: 0.3rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+}
+body .options_container .options .row input::-moz-placeholder {
+  color: #dadad9;
+}
+body .options_container .options .row input:-ms-input-placeholder {
+  color: #dadad9;
+}
+body .options_container .options .row input::placeholder {
+  color: #dadad9;
+}
+body .options_container .options .row input#neurons_num {
+  width: 10rem;
+}
+body .options_container .options .row input#population_num {
+  width: 12rem;
+}
+body .options_container .options .row select, body .options_container .options .row button {
+  background-color: #007acc;
+  color: #e1e1e1;
+  border: 0;
+  border-radius: 0.3rem;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+}
+body .options_container .options .row button {
+  cursor: pointer;
+}
+body .options_container .options .layers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+body .options_container .options .layers .layer {
+  position: relative;
+  width: 80%;
+  padding: 1rem;
+  font-size: 1.8rem;
+  border: 0.1rem solid #007acc;
+}
+body .options_container .options .layers .layer i {
+  position: absolute;
+  right: 1rem;
+  color: #d9534f;
+  cursor: pointer;
+}
+body .options_container .options .layers .layer .num {
+  color: #ff8533;
+}
+body .options_container .options .layers .layer select {
+  background-color: #dadad9;
+  border: 0;
+  color: #1e1e1e;
+  padding: 0.1rem 0.5rem;
+}
+body .options_container .options .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+body .options_container .options .buttons button {
+  border: 0;
+  border-radius: 0.5rem;
+  padding: 0.6rem 2rem;
+  font-size: 1.5rem;
+  color: #e1e1e1;
+  cursor: pointer;
+}
+body .options_container .options .buttons button.save {
+  background-color: #5cb85c;
+}
+body .options_container .options .buttons button.discard {
+  background-color: #d9534f;
+}
+body .options_container .options .cb_con {
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+body .options_container .options .cb_con label {
+  margin-left: 1rem;
+}
+body .options_container .options .rb_con {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+  margin: 2rem 0;
+}
+body .options_container .options .rb_con input[type=radio] {
+  margin-left: 1.5rem;
+}
+body .options_container .options .range_con {
+  justify-content: center;
+}
+body .options_container .options .range_con #surviv {
+  -webkit-appearance: none;
+  width: 80%;
+  height: 2rem;
+  opacity: 0.7;
+  background-color: #c1c1bd;
+  border-radius: 0;
+  padding: 0;
+}
+body .options_container .options .range_con #surviv:hover {
+  opacity: 1;
+}
+body .options_container .options .range_con #surviv::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2rem;
+  height: 2rem;
+  background-color: #007acc;
+}
+body .options_container .options .range_con #surviv::-moz-range-thumb {
+  width: 2rem;
+  height: 2rem;
+  background-color: #007acc;
 }
 
 /* DARK MODE */
@@ -79,4 +306,18 @@ body main #myCanvas {
 }
 .dark header .welcome h2 {
   color: #e1e1e1;
+}
+.dark .options_container {
+  background-color: rgba(37, 37, 38, 0.5);
+}
+.dark .options_container .options {
+  background-color: #1e1e1e;
+  box-shadow: 0 0 10px 6px rgba(225, 225, 225, 0.15);
+}
+.dark .options_container .options .layers .layer select {
+  background-color: #252526;
+  color: #e1e1e1;
+}
+.dark .options_container .options .range_con #surviv {
+  background-color: #3e3e42;
 }/*# sourceMappingURL=play.css.map */
