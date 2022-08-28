@@ -9,13 +9,18 @@ export default class TrainState {
      * @param {HTMLCanvasElement} canvas
      * @param {CanvasRenderingContext2D} ctx
      * @param {Object} sprites
+     * @param {HTMLCanvasElement} gaCanvas
+     * @param {CanvasRenderingContext2D} gaCtx
      */
-     constructor(canvas, ctx, sprites, pressedKeys, nnCanvas, nnCtx) {
+     constructor(canvas, ctx, sprites, pressedKeys, nnCanvas, nnCtx, gaCanvas, gaCtx) {
         this.canvas = canvas;
         this.ctx = ctx;
 
         this.nnCanvas = nnCanvas;
         this.nnCtx = nnCtx;
+
+        this.gaCanvas = gaCanvas;
+        this.gaCtx = gaCtx;
 
         this.sprites = sprites;
 
@@ -56,6 +61,28 @@ export default class TrainState {
 
         this.generation = 1;
         this.population = [];
+
+        this.data = [
+            {
+                best: 12,
+                worst: 0,
+                mean: 1.36,
+                median: 1.5
+            },
+            {
+                best: 10,
+                worst: 0,
+                mean: 1.52,
+                median: 0.5
+            },
+            {
+                best: 2,
+                worst: 0,
+                mean: 1.1,
+                median: 1
+            }
+        ];
+        this.dataShown = ['best', 'worst', 'mean', 'median'];
 
         this.paused = false;
 
@@ -147,6 +174,8 @@ export default class TrainState {
         if(first) {
             first.brain.visualizeNetwork(this.nnCanvas, this.nnCtx, this.population.findIndex(i => i.alive) + 1);
         }
+
+        this.visualizeChart();
     }
 
     update(dt) {
@@ -215,6 +244,22 @@ export default class TrainState {
 
                 newPopulation.push(this.population[parents[0]].mate(this.population[parents[1]], this.evolution.mutation, this.evolution.mutationChance, this.evolution.crossover));
             }
+
+            let sum = this.population.reduce((a, b) => a + b.score, 0);
+            if(this.population.length > 0) sum /= this.population.length;
+            else sum = 0;
+
+            let median = this.population[Math.floor(this.population.length / 2)].score;
+            if(this.population.length % 2 === 0) median = (median + this.population[Math.floor(this.population.length / 2) + 1].score) / 2;
+
+            this.data[this.generation - 1] = {
+                best : Math.max(...[0, ...this.population.map(i => i.score)]),
+                worst: Math.min(...[0, ...this.population.map(i => i.score)]),
+                mean: sum,
+                median: median
+            };
+
+            console.log(this.data);
 
             this.generation++;
 
@@ -289,5 +334,139 @@ export default class TrainState {
         this.paused = true;
 
         this.population.forEach(i => i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2));
+    }
+
+    visualizeChart() {
+        const COLOR_DARK = '#3e3e42';
+        const COLOR_LIGTH = '#c1c1bd';
+        const COLOR_YELLOW = '#f0ad4e';
+        const COLOR_BLUE = '#007acc';
+        const COLOR_GREEN = '#5cb85c';
+        const COLOR_RED = '#d9534f';
+
+        const lineColor = document.body.classList.contains('dark') ? COLOR_DARK : COLOR_LIGTH;
+
+        this.gaCtx.clearRect(0, 0, this.gaCanvas.width, this.gaCanvas.height);
+
+        this.gaCtx.strokeStyle = lineColor;
+        this.gaCtx.fillStyle = document.body.classList.contains('dark') ? COLOR_LIGTH : COLOR_DARK;
+
+        let unitY = this.gaCanvas.height / 100;
+        let unitX = this.gaCanvas.width / 100;
+    
+        for(let i=0;i<6;i++) {
+            this.gaCtx.beginPath();
+            this.gaCtx.moveTo(10 * unitX, 10 * unitY + 12 * unitY * i);
+            this.gaCtx.lineTo(99 * unitX, 10 * unitY + 12 * unitY * i);
+            this.gaCtx.stroke();
+        }
+
+        for(let i=0;i<8;i++) {
+            this.gaCtx.beginPath();
+            this.gaCtx.moveTo(12 * unitX + 12 * unitX * i, 6 * unitY);
+            this.gaCtx.lineTo(12 * unitX + 12 * unitX * i, 74 * unitY);
+            this.gaCtx.stroke();
+        }
+
+        if(this.data.length > 0) {
+            let maxBest = 0;
+
+            this.dataShown.forEach(i => {
+                maxBest = Math.max(maxBest, Math.max(...this.data.map(j => j[i])));
+            });
+
+            let maxVal = Math.max(Math.ceil(maxBest / 5), 1) * 5;
+
+            this.gaCtx.textBaseline = 'middle';
+            this.gaCtx.textAlign = 'right';
+            this.gaCtx.font = `${4.5*unitY}px Roboto`;
+
+            for(let i=0;i<6;i++) {
+                this.gaCtx.fillText(`${(5 - i) * maxVal / 5}`, 9 * unitX, 10 * unitY + 12 * unitY * i);
+            }
+
+            this.gaCtx.textBaseline = 'top';
+            this.gaCtx.textAlign = 'center';
+
+            for(let i=0;i<8;i++) {
+                this.gaCtx.fillText(`${(i * this.data.length / 7).toFixed(2)}`, 12 * unitX + 12 * unitX * i, 76 * unitY);
+            }
+
+            this.gaCtx.textAlign = 'center';
+            this.gaCtx.textBaseline = 'middle';
+
+            this.gaCtx.save();
+            this.gaCtx.translate(3 * unitX, 10 * unitY + 30 * unitY);
+            this.gaCtx.rotate(-Math.PI / 2);
+            this.gaCtx.translate(-3 * unitX, -10 * unitY - 30 * unitY);
+            this.gaCtx.fillText(`Score`, 3 * unitX, 10 * unitY + 30 * unitY);
+            this.gaCtx.restore();
+
+            this.gaCtx.fillText(`Generation`, 12 * unitX + 42 * unitX, 87 * unitY);
+
+            // Draw Best
+
+            if(this.dataShown.includes('best')) {
+                this.gaCtx.strokeStyle = COLOR_GREEN;
+                this.gaCtx.beginPath();
+                this.gaCtx.moveTo(12 * unitX, 70 * unitY);
+                this.data.forEach((i, ind) => {
+                    this.gaCtx.lineTo(12 * unitX + (ind + 1) * 84 * unitX / this.data.length, 70 * unitY - 60 * unitY * i.best / maxVal);
+                });
+                this.gaCtx.stroke();
+            }
+
+            if(this.dataShown.includes('worst')) {
+                this.gaCtx.strokeStyle = COLOR_RED;
+                this.gaCtx.beginPath();
+                this.gaCtx.moveTo(12 * unitX, 70 * unitY);
+                this.data.forEach((i, ind) => {
+                    this.gaCtx.lineTo(12 * unitX + (ind + 1) * 84 * unitX / this.data.length, 70 * unitY - 60 * unitY * i.worst / maxVal);
+                });
+                this.gaCtx.stroke();
+            }
+
+            if(this.dataShown.includes('mean')) {
+                this.gaCtx.strokeStyle = COLOR_YELLOW;
+                this.gaCtx.beginPath();
+                this.gaCtx.moveTo(12 * unitX, 70 * unitY);
+                this.data.forEach((i, ind) => {
+                    this.gaCtx.lineTo(12 * unitX + (ind + 1) * 84 * unitX / this.data.length, 70 * unitY - 60 * unitY * i.mean / maxVal);
+                });
+                this.gaCtx.stroke();
+            }
+
+            if(this.dataShown.includes('median')) {
+                this.gaCtx.strokeStyle = COLOR_BLUE;
+                this.gaCtx.beginPath();
+                this.gaCtx.moveTo(12 * unitX, 70 * unitY);
+                this.data.forEach((i, ind) => {
+                    this.gaCtx.lineTo(12 * unitX + (ind + 1) * 84 * unitX / this.data.length, 70 * unitY - 60 * unitY * i.median / maxVal);
+                });
+                this.gaCtx.stroke();
+            }
+
+            let lx = 0;
+
+            this.gaCtx.textAlign = 'left';
+            this.gaCtx.textBaseline = 'middle';
+
+            this.dataShown.forEach(i => {
+                this.gaCtx.fillStyle = {
+                    'best': COLOR_GREEN,
+                    'worst': COLOR_RED,
+                    'mean': COLOR_YELLOW,
+                    'median': COLOR_BLUE
+                }[i];
+
+                this.gaCtx.beginPath();
+                this.gaCtx.arc(12 * unitX + lx, 94 * unitY, 0.7 * unitX, 0, 2 * Math.PI);
+                this.gaCtx.fill();
+
+                this.gaCtx.fillText(i, 14 * unitX + lx, 94 * unitY);
+
+                lx += 4.5 * unitX + this.gaCtx.measureText(i).width;
+            });
+        }
     }
 }

@@ -193,11 +193,13 @@ body {
             height: 100%;
 
             canvas {
-                background-color: $color-dark-1-90;
+                background-color: $color-light-1-90;
+
+                transition: all 1s;
             }
 
             .upper {
-                flex: 2;
+                flex: 1.5;
 
                 display: flex;
                 justify-content: center;
@@ -501,6 +503,12 @@ body {
 
         }
 
+    }
+
+    .container2 {
+        canvas {
+            background-color: $color-dark-1-90;
+        }
     }
 
     .options_container {

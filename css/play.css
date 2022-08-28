@@ -119,10 +119,11 @@ body main .container2 {
   height: 100%;
 }
 body main .container2 canvas {
-  background-color: rgba(30, 30, 30, 0.8);
+  background-color: rgba(225, 225, 225, 0.8);
+  transition: all 1s;
 }
 body main .container2 .upper {
-  flex: 2;
+  flex: 1.5;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -331,6 +332,9 @@ body .options_container .options .range_con #surviv::-moz-range-thumb {
 }
 .dark header .welcome h2 {
   color: #e1e1e1;
+}
+.dark .container2 canvas {
+  background-color: rgba(30, 30, 30, 0.8);
 }
 .dark .options_container {
   background-color: rgba(37, 37, 38, 0.5);

@@ -56,7 +56,7 @@ let game = new Game(canvas, ctx);
 const runGame = async () => {
     await game.load();
 
-    game.state = new TrainState(game.canvas, game.ctx, game.sprites, game.pressedKeys, nnCanvas, nnCtx);
+    game.state = new TrainState(game.canvas, game.ctx, game.sprites, game.pressedKeys, nnCanvas, nnCtx, gaCanvas, gaCtx);
     game.run();
 };
 
