@@ -3,6 +3,20 @@ const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
 const main = document.querySelector('.container');
+const upper = document.querySelector('.container2 > .upper');
+const lower = document.querySelector('.container2 > .lower');
+
+const nnCanvas = document.getElementById('nnCanvas');
+const nnCtx = nnCanvas.getContext('2d');
+
+const gaCanvas = document.getElementById('gaCanvas');
+const gaCtx = gaCanvas.getContext('2d');
+
+nnCanvas.height = Math.min(upper.clientHeight * 0.9, upper.clientWidth * 0.9 / 1.5);
+nnCanvas.width = nnCanvas.height * 1.5;
+
+gaCanvas.height = Math.min(lower.clientHeight * 0.9, lower.clientWidth * 0.9 / 2);
+gaCanvas.width = gaCanvas.height * 2;
 
 let aspectRatio = 144 / 256;
 
@@ -26,6 +40,12 @@ window.onresize = () => {
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
+
+    nnCanvas.height = Math.min(upper.clientHeight * 0.8, upper.clientWidth * 0.8 / 1.5);
+    nnCanvas.width = nnCanvas.height * 1.5;
+
+    gaCanvas.height = Math.min(lower.clientHeight * 0.9, lower.clientWidth * 0.9 / 2);
+    gaCanvas.width = gaCanvas.height * 2;
 };
 
 import Game from './src/Game.js';
@@ -36,7 +56,7 @@ let game = new Game(canvas, ctx);
 const runGame = async () => {
     await game.load();
 
-    game.state = new TrainState(game.canvas, game.ctx, game.sprites, game.pressedKeys);
+    game.state = new TrainState(game.canvas, game.ctx, game.sprites, game.pressedKeys, nnCanvas, nnCtx);
     game.run();
 };
 
@@ -258,5 +278,25 @@ document.getElementById('surviv').onmousemove = () => {
 };
 
 document.getElementById('start_game').onclick = () => {
-    game.state.gameOn = true;
-}
+    game.state.start();
+
+    document.getElementById('start_game').disabled = true;
+    document.getElementById('pause_game').disabled = false;
+    document.getElementById('stop_game').disabled = false;
+};
+
+document.getElementById('pause_game').onclick = () => {
+    game.state.pause();
+
+    document.getElementById('start_game').disabled = false;
+    document.getElementById('pause_game').disabled = true;
+    document.getElementById('stop_game').disabled = false;
+};
+
+document.getElementById('stop_game').onclick = () => {
+    game.state.stop();
+
+    document.getElementById('start_game').disabled = false;
+    document.getElementById('pause_game').disabled = true;
+    document.getElementById('stop_game').disabled = true;
+};

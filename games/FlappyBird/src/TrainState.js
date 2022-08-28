@@ -10,9 +10,12 @@ export default class TrainState {
      * @param {CanvasRenderingContext2D} ctx
      * @param {Object} sprites
      */
-     constructor(canvas, ctx, sprites, pressedKeys) {
+     constructor(canvas, ctx, sprites, pressedKeys, nnCanvas, nnCtx) {
         this.canvas = canvas;
         this.ctx = ctx;
+
+        this.nnCanvas = nnCanvas;
+        this.nnCtx = nnCtx;
 
         this.sprites = sprites;
 
@@ -53,6 +56,12 @@ export default class TrainState {
 
         this.generation = 1;
         this.population = [];
+
+        this.paused = false;
+
+        this.highscore = 0;
+
+        this.resetNeuroEvolution();
     }
 
     resetNeuroEvolution() {
@@ -126,12 +135,26 @@ export default class TrainState {
                 this.ctx.globalAlpha = 1;
             }
         });
+
+        this.ctx.font = `${6 * this.scale}px Roboto`;
+        this.ctx.fillText(`Generation: ${this.generation}`, 10 * this.scale, (this.sprites.background.height - 35) * this.scale);
+        let alives = this.population.reduce((a, b) => a + (b.alive ? 1 : 0), 0);
+        this.ctx.fillText(`Alive: ${alives} / ${this.population.length}`, 10 * this.scale, (this.sprites.background.height - 27) * this.scale);
+        let first = this.population.find(i => i.alive);
+        this.ctx.fillText(`Score: ${first ? first.score : 0}`, 10 * this.scale, (this.sprites.background.height - 19) * this.scale);
+        this.ctx.fillText(`Highscore: ${this.highscore}`, 10 * this.scale, (this.sprites.background.height - 12) * this.scale);
+
+        if(first) {
+            first.brain.visualizeNetwork(this.nnCanvas, this.nnCtx, this.population.findIndex(i => i.alive) + 1);
+        }
     }
 
     update(dt) {
+        if(this.paused) return;
+
         this.scale = this.canvas.width / this.sprites.background.width;
 
-        let alives = this.population.reduce((a, b) => a + b.alive ? 1 : 0, 0);
+        let alives = this.population.reduce((a, b) => a + (b.alive ? 1 : 0), 0);
 
         this.population.forEach(bird => {
             let inputs = [];
@@ -146,7 +169,12 @@ export default class TrainState {
             }
     
             let outputs = bird.brain.feedForward(inputs);
-            if(outputs[0] > 0) {
+            let comparator = undefined;
+            if(this.neuralNet[this.neuralNet.length - 1].activation === 'relu') comparator = 0;
+            else if(this.neuralNet[this.neuralNet.length - 1].activation === 'sigmoid') comparator = 0.5;
+            else if(this.neuralNet[this.neuralNet.length - 1].activation === 'tanh') comparator = 0;
+
+            if(outputs[0] > comparator) {
                 if(bird.alive && this.gameOn) bird.jump();
             }
 
@@ -174,14 +202,16 @@ export default class TrainState {
         } else if(this.gameOn) {
             // New generation
 
+            this.highscore = Math.max(...[this.highscore, ...this.population.map(i => i.score)]);
+
             let newPopulation = this.survivorSelectionMethod(this.population, this.evolution.survivorPer);
 
-            for(let i=0;i<newPopulation.length;i++) newPopulation[i].age++;
+            for(let i=0;i<newPopulation.length;i++) {
+                newPopulation[i].age++;
+            }
 
             while(newPopulation.length < this.evolution.population) {
                 let parents = this.parentSelectionMethod(this.population);
-
-                console.log(parents);
 
                 newPopulation.push(this.population[parents[0]].mate(this.population[parents[1]], this.evolution.mutation, this.evolution.mutationChance, this.evolution.crossover));
             }
@@ -189,6 +219,8 @@ export default class TrainState {
             this.generation++;
 
             this.population = newPopulation;
+
+            this.population.forEach(i => i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2));
 
             this.init();
 
@@ -241,5 +273,21 @@ export default class TrainState {
                 }
             }
         });
+    }
+
+    pause() {
+        this.paused = true;
+    }
+
+    start() {
+        this.paused = false;
+        this.gameOn = true;
+    }
+
+    stop() {
+        this.init();
+        this.paused = true;
+
+        this.population.forEach(i => i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2));
     }
 }

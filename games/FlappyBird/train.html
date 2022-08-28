@@ -17,8 +17,8 @@
                 <button id="ga_button"><i class="fa-solid fa-dna"></i> Evolution Options</button>
                 <button id="nn_button"><i class="fa-solid fa-brain"></i> Neural Network Options</button>
                 <button id="start_game" class="start"><i class="fa-solid fa-play"></i> Start</button>
-                <button class="pause" disabled><i class="fa-solid fa-pause"></i> Pause</button>
-                <button class="stop" disabled><i class="fa-solid fa-stop"></i> Stop</button>
+                <button id="pause_game" class="pause" disabled><i class="fa-solid fa-pause"></i> Pause</button>
+                <button id="stop_game" class="stop" disabled><i class="fa-solid fa-stop"></i> Stop</button>
                 <button><i class="fa-solid fa-folder-open"></i> Load</button>
                 <button><i class="fa-solid fa-floppy-disk"></i> Save</button>
             </ul>
@@ -28,6 +28,14 @@
     <main>
         <div class="container">
             <canvas id="myCanvas" width="432" height="768"></canvas>
+        </div>
+        <div class="container2">
+            <div class="upper">
+                <canvas id="nnCanvas" width="500" height="500"></canvas>
+            </div>
+            <div class="lower" style="display: none;">
+                <canvas id="gaCanvas" width="500" height="250"></canvas>
+            </div>
         </div>
     </main>
     <div class="options_container" id="nn_options">

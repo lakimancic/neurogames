@@ -16,12 +16,14 @@ html {
 /* COLORS */
 
 $color-dark-1: #1e1e1e;
+$color-dark-1-90: rgba(30, 30, 30, 0.8);
 $color-dark-2: #252526;
 $color-dark-2-50: rgba(37, 37, 38, 0.5);
 $color-dark-3: #2d2d30;
 $color-dark-4: #3e3e42;
 $color-dark-4-80: rgba(62, 62, 66, 0.8);
 $color-light-1: #e1e1e1;
+$color-light-1-90: rgba(225, 225, 225, 0.8);
 $color-light-2: #dadad9;
 $color-light-2-50: rgba(218, 218, 217, 0.5);
 $color-light-3: #d2d2cf;
@@ -178,6 +180,41 @@ body {
             align-items: center;
 
             height: 100%;
+        }
+
+        .container2 {
+            flex: 1;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            height: 100%;
+
+            canvas {
+                background-color: $color-dark-1-90;
+            }
+
+            .upper {
+                flex: 2;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                width: 100%;
+            }
+
+            .lower {
+                flex: 1;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                width: 100%;
+            }
         }
     }
 

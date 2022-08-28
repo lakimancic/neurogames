@@ -79,7 +79,7 @@ export default class Bird {
 
         this.ctx.drawImage(
             this.sprites.bird,
-            this.frame * frameWidth, 0, frameWidth, frameHeight,
+            this.frame * frameWidth, 0, frameWidth - 0.5, frameHeight,
             this.x * scale - width / 2, this.y * scale - height / 2, width, height
         );
 
