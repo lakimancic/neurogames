@@ -44,17 +44,43 @@ body header .fa-solid {
 }
 body header .welcome {
   width: 100%;
-  text-align: center;
-  background-color: rgba(193, 193, 189, 0.8);
-  color: #007acc;
+  height: 25rem;
+  position: relative;
   transition: background 1s, color 1s;
+  color: #007acc;
   font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-body header .welcome h1 {
-  padding: 2rem 0;
+body header .welcome .background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(225, 225, 225, 0.8);
+  filter: blur(2rem);
+  z-index: -10;
+  transition: background 1s, color 1s;
 }
-body header .welcome h2 {
-  padding: 1.5rem 0;
+body header .welcome img {
+  height: 12rem;
+}
+body header .welcome .text-container h1 {
+  padding: 0 2rem;
+  font-size: 5rem;
+  transform: scaleY(1.1);
+  background: linear-gradient(90deg, #007acc 0%, #53aae4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body header .welcome .text-container h2 {
+  padding: 0.5rem 2rem;
+  font-size: 2rem;
+  font-weight: normal;
+  color: #1e1e1e;
+  transition: background 1s, color 1s;
 }
 body main {
   padding-bottom: 5rem;
@@ -126,8 +152,11 @@ body::-webkit-scrollbar-thumb {
 .dark #particles-js {
   filter: invert(0);
 }
-.dark header .welcome {
-  background-color: rgba(62, 62, 66, 0.8);
+.dark header .welcome .background {
+  background-color: rgba(17, 17, 17, 0.5);
+}
+.dark header .welcome .text-container h2 {
+  color: rgba(225, 225, 225, 0.8);
 }
 .dark main .games .game {
   box-shadow: 0 0 10px 6px rgba(225, 225, 225, 0.15);

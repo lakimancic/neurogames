@@ -49,9 +49,21 @@ body header .welcome {
   transition: background 1s, color 1s;
   font-size: 1.5rem;
 }
+body header .welcome .title-con {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 body header .welcome h1 {
-  padding: 1rem 0;
-  letter-spacing: 0.8rem;
+  padding: 1.5rem 1rem;
+  font-size: 3.5rem;
+  transform: scaleY(1.1);
+  background: linear-gradient(90deg, #007acc 0%, #53aae4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body header .welcome img {
+  height: 4.5rem;
 }
 body header .welcome h2 {
   padding: 0.5rem 0;
@@ -95,7 +107,7 @@ body header .welcome .menu button:disabled {
 }
 body main {
   width: 100%;
-  height: calc(100vh - 10rem);
+  height: calc(100vh - 12rem);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -112,7 +124,7 @@ body main .container {
 }
 body main .container2 {
   flex: 1;
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -124,14 +136,14 @@ body main .container2 canvas {
 }
 body main .container2 .upper {
   flex: 1.5;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   width: 100%;
 }
 body main .container2 .lower {
   flex: 1;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -146,11 +158,27 @@ body .options_container {
   justify-content: center;
   align-items: center;
 }
+body .options_container .options-outer {
+  position: relative;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+body .options_container .options-outer i.fa-circle-xmark {
+  position: absolute;
+  right: 6.5rem;
+  top: 1rem;
+  font-size: 2.5rem;
+  cursor: pointer;
+}
 body .options_container .options {
   width: 55rem;
   max-width: 90%;
   min-height: 20rem;
-  max-height: 50%;
+  max-height: 50vh;
   border-radius: 2rem;
   background-color: #e1e1e1;
   box-shadow: 0 0 10px 6px rgba(30, 30, 30, 0.5);
@@ -283,6 +311,16 @@ body .options_container .options .cb_con {
 }
 body .options_container .options .cb_con label {
   margin-left: 1rem;
+}
+body .options_container .options .cb_row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+  margin: 1rem 0;
+}
+body .options_container .options .cb_row label {
+  margin-right: 1rem;
 }
 body .options_container .options .rb_con {
   display: flex;

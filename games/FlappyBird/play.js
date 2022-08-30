@@ -4,8 +4,10 @@ const ctx = canvas.getContext('2d');
 
 const main = document.querySelector('main');
 
-let HEIGHT = main.clientHeight * 0.9;
-let WIDTH = HEIGHT * 144 / 256;
+let aspectRatio = 144 / 256;
+
+let HEIGHT = Math.min(main.clientHeight * 0.9, main.clientWidth * 0.9 / aspectRatio);
+let WIDTH = HEIGHT * aspectRatio;
 
 canvas.height = HEIGHT;
 canvas.width = WIDTH;
@@ -15,8 +17,8 @@ ctx.mozImageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
 window.onresize = () => {
-    HEIGHT = main.clientHeight * 0.9;
-    WIDTH = HEIGHT * 144 / 256;
+    let HEIGHT = Math.min(main.clientHeight * 0.9, main.clientWidth * 0.9 / aspectRatio);
+    let WIDTH = HEIGHT * aspectRatio;
 
     canvas.height = HEIGHT;
     canvas.width = WIDTH;

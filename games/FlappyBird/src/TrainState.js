@@ -62,26 +62,7 @@ export default class TrainState {
         this.generation = 1;
         this.population = [];
 
-        this.data = [
-            {
-                best: 12,
-                worst: 0,
-                mean: 1.36,
-                median: 1.5
-            },
-            {
-                best: 10,
-                worst: 0,
-                mean: 1.52,
-                median: 0.5
-            },
-            {
-                best: 2,
-                worst: 0,
-                mean: 1.1,
-                median: 1
-            }
-        ];
+        this.data = [];
         this.dataShown = ['best', 'worst', 'mean', 'median'];
 
         this.paused = false;
@@ -171,11 +152,15 @@ export default class TrainState {
         this.ctx.fillText(`Score: ${first ? first.score : 0}`, 10 * this.scale, (this.sprites.background.height - 19) * this.scale);
         this.ctx.fillText(`Highscore: ${this.highscore}`, 10 * this.scale, (this.sprites.background.height - 12) * this.scale);
 
-        if(first) {
-            first.brain.visualizeNetwork(this.nnCanvas, this.nnCtx, this.population.findIndex(i => i.alive) + 1);
+        if(document.querySelector('.container2 > .upper').style.display === 'flex') {
+            if(first) {
+                first.brain.visualizeNetwork(this.nnCanvas, this.nnCtx, this.population.findIndex(i => i.alive) + 1);
+            }
         }
 
-        this.visualizeChart();
+        if(document.querySelector('.container2 > .lower').style.display === 'flex') {
+            this.visualizeChart();
+        }
     }
 
     update(dt) {
@@ -249,8 +234,11 @@ export default class TrainState {
             if(this.population.length > 0) sum /= this.population.length;
             else sum = 0;
 
-            let median = this.population[Math.floor(this.population.length / 2)].score;
-            if(this.population.length % 2 === 0) median = (median + this.population[Math.floor(this.population.length / 2) + 1].score) / 2;
+            let pomPopulation = [...this.population];
+            pomPopulation.sort((a, b) => (b.score - a.score));
+
+            let median = pomPopulation[Math.floor(this.population.length / 2)].score;
+            if(this.population.length % 2 === 0) median = (median + pomPopulation[Math.floor(this.population.length / 2) + 1].score) / 2;
 
             this.data[this.generation - 1] = {
                 best : Math.max(...[0, ...this.population.map(i => i.score)]),

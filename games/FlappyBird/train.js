@@ -30,7 +30,7 @@ ctx.webkitImageSmoothingEnabled = false;
 ctx.mozImageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
-window.onresize = () => {
+const updateCanvasSize = () => {
     HEIGHT = Math.min(main.clientHeight * 0.9, main.clientWidth * 0.9 / aspectRatio);
     WIDTH = HEIGHT * aspectRatio;
 
@@ -46,6 +46,10 @@ window.onresize = () => {
 
     gaCanvas.height = Math.min(lower.clientHeight * 0.9, lower.clientWidth * 0.9 / 2);
     gaCanvas.width = gaCanvas.height * 2;
+}
+
+window.onresize = () => {
+    updateCanvasSize();
 };
 
 import Game from './src/Game.js';
@@ -130,7 +134,11 @@ const openNeuralNetworkOptions = () => {
     pomNN = [];
     game.state.neuralNet.forEach(i => pomNN.push({...i}));
 
+    document.querySelector('#nn_options .options').scrollTop = 0;
+
     renderLayers();
+
+    document.getElementById('visualize_nn').checked = (document.querySelector('.container2 > .upper').style.display === 'flex');
 };
 
 document.getElementById('nn_button').onclick = openNeuralNetworkOptions;
@@ -163,18 +171,40 @@ document.getElementById('save_nn').onclick = () => {
     document.getElementById('nn_options').style.removeProperty('display');
 
     game.state.resetNeuroEvolution();
+
+    // document.querySelector('.container2').style.display = document.querySelector('.container2 > .lower').style.display || (document.getElementById('visualize_nn').checked ? 'flex' : '');
+
+    // document.querySelector('.container2 > .upper').style.display = (document.getElementById('visualize_nn').checked ? 'flex' : '');
+
+    updateCanvasSize();
 };
 document.getElementById('discard_nn').onclick = () => {
     document.getElementById('nn_options').style.removeProperty('display');
+};
+
+document.querySelector('#nn_options .fa-circle-xmark').onclick = () => {
+    document.getElementById('nn_options').style.removeProperty('display');
+}
+
+document.getElementById('visualize_nn').onchange = () => {
+    document.querySelector('.container2').style.display = document.querySelector('.container2 > .lower').style.display || (document.getElementById('visualize_nn').checked ? 'flex' : '');
+
+    document.querySelector('.container2 > .upper').style.display = (document.getElementById('visualize_nn').checked ? 'flex' : '');
+
+    updateCanvasSize();
 };
 
 // Evolution Options
 
 let pomEvObj = {};
 
+const dataTypes = ['best', 'worst', 'mean', 'median'];
+
 const openEvolutionOptions = () => {
     let options = document.getElementById('ga_options');
     options.style.display = 'flex';
+
+    document.querySelector('#ga_options .options').scrollTop = 0;
 
     pomEvObj = { ...game.state.evolution };
 
@@ -191,11 +221,19 @@ const updateGAData = () => {
     document.getElementById('mutation').value = pomEvObj.mutation;
     document.getElementById('age').checked = pomEvObj.survivorSel === 'age';
     document.getElementById('fit').checked = pomEvObj.survivorSel === 'fitness';
+
+    dataTypes.forEach(i => {
+        document.getElementById(`show_${i}`).checked = game.state.dataShown.includes(i);
+    });
 };
 
 document.getElementById('discard_ga').onclick = () => {
     document.getElementById('ga_options').style.removeProperty('display');
 };
+
+document.querySelector('#ga_options .fa-circle-xmark').onclick = () => {
+    document.getElementById('ga_options').style.removeProperty('display');
+}
 
 document.getElementById('save_ga').onclick = () => {
     game.state.evolution = pomEvObj;
@@ -203,7 +241,41 @@ document.getElementById('save_ga').onclick = () => {
     document.getElementById('ga_options').style.removeProperty('display');
 
     game.state.resetNeuroEvolution();
+
+    updateCanvasSize();
 };
+
+document.getElementById('visualize_ga').onchange = () => {
+    dataTypes.forEach(i => {
+        document.getElementById(`show_${i}`).disabled = !document.getElementById('visualize_ga').checked;
+    });
+
+    document.querySelector('.container2').style.display = document.querySelector('.container2 > .upper').style.display || (document.getElementById('visualize_ga').checked ? 'flex' : '');
+
+    document.querySelector('.container2 > .lower').style.display = (document.getElementById('visualize_ga').checked ? 'flex' : '');
+
+    game.state.dataShown = [];
+
+    dataTypes.forEach(i => {
+        if(document.getElementById(`show_${i}`).checked) {
+            game.state.dataShown.push(i);
+        }
+    });
+
+    updateCanvasSize();
+};
+
+dataTypes.forEach(i => {
+    document.getElementById(`show_${i}`).onchange = () => {
+        game.state.dataShown = [];
+    
+        dataTypes.forEach(j => {
+            if(document.getElementById(`show_${j}`).checked) {
+                game.state.dataShown.push(j);
+            }
+        });
+    };
+});
 
 document.getElementById('ga_button').onclick = openEvolutionOptions;
 

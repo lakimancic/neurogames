@@ -38,6 +38,7 @@ $color-yellow: #f0ad4e;
 $transition: background 1s, color 1s;
 $dark-shadow: 0 0 10px 6px rgba(30, 30, 30, 0.5);
 $light-shadow: 0 0 10px 6px rgba(225, 225, 225, 0.15);
+$blue-gradient: linear-gradient(90deg, #007acc 0%, #53aae4 100%);
 
 /* PARTICLES */
 
@@ -94,10 +95,26 @@ body {
 
             font-size: 1.5rem;
 
-            h1 {
-                padding: 1rem 0;
+            .title-con {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
-                letter-spacing: 0.8rem;
+            h1 {
+                padding: 1.5rem 1rem;
+
+                font-size: 3.5rem;
+
+                transform: scaleY(1.1);
+
+                background: $blue-gradient;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            img {
+                height: 4.5rem;
             }
 
             h2 {
@@ -162,7 +179,7 @@ body {
 
     main {
         width: 100%;
-        height: calc(100vh - 10rem);
+        height: calc(100vh - 12rem);
 
         display: flex;
         justify-content: center;
@@ -185,7 +202,7 @@ body {
         .container2 {
             flex: 1;
 
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -201,7 +218,7 @@ body {
             .upper {
                 flex: 1.5;
 
-                display: flex;
+                display: none;
                 justify-content: center;
                 align-items: center;
 
@@ -211,7 +228,7 @@ body {
             .lower {
                 flex: 1;
 
-                display: flex;
+                display: none;
                 justify-content: center;
                 align-items: center;
 
@@ -233,12 +250,29 @@ body {
         justify-content: center;
         align-items: center;
 
-        .options {
+        .options-outer {
+            position: relative;
 
+            width: fit-content;
+            height: fit-content;
+
+            i.fa-circle-xmark {
+                position: absolute;
+
+                right: 6.5rem;
+                top: 1rem;
+
+                font-size: 2.5rem;
+
+                cursor: pointer;
+            }
+        }
+
+        .options {
             width: 55rem;
             max-width: 90%;
             min-height: 20rem;
-            max-height: 50%;
+            max-height: 50vh;
 
             border-radius: 2rem;
 
@@ -425,6 +459,20 @@ body {
 
                 label {
                     margin-left: 1rem;
+                }
+            }
+
+            .cb_row {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+
+                font-size: 1.5rem;
+
+                margin: 1rem 0;
+
+                label {
+                    margin-right: 1rem;
                 }
             }
 

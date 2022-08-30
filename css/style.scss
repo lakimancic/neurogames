@@ -15,11 +15,13 @@ html {
 
 /* COLORS */
 
+$color-dark-0: rgba(17, 17, 17, 0.5);
 $color-dark-1: #1e1e1e;
 $color-dark-2: #252526;
 $color-dark-3: #2d2d30;
 $color-dark-4: #3e3e42;
 $color-dark-4-80: rgba(62, 62, 66, 0.8);
+$color-light-0: rgba(225, 225, 225, 0.8);
 $color-light-1: #e1e1e1;
 $color-light-2: #dadad9;
 $color-light-3: #d2d2cf;
@@ -31,6 +33,7 @@ $color-orange: #ff8533;
 $transition: background 1s, color 1s;
 $dark-shadow: 0 0 10px 6px rgba(30, 30, 30, 0.5);
 $light-shadow: 0 0 10px 6px rgba(225, 225, 225, 0.15);
+$blue-gradient: linear-gradient(90deg, #007acc 0%, #53aae4 100%);
 
 /* PARTICLES */
 
@@ -78,22 +81,64 @@ body {
 
         .welcome {
             width: 100%;
+            height: 25rem;
 
-            text-align: center;
-
-            background-color: $color-light-4-80;
-            color: $color-blue;
+            position: relative;
 
             transition: $transition;
 
+            color: $color-blue;
+
             font-size: 1.5rem;
 
-            h1 {
-                padding: 2rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .background {
+                width: 100%;
+                height: 100%;
+
+                position: absolute;
+
+                top: 0;
+                left: 0;
+
+                background-color: $color-light-0;
+                filter: blur(2rem);
+
+                z-index: -10;
+
+                transition: $transition;
             }
 
-            h2 {
-                padding: 1.5rem 0;
+            img {
+                height: 12rem;
+            }
+
+            .text-container {    
+                h1 {
+                    padding: 0 2rem;
+
+                    font-size: 5rem;
+
+                    transform: scaleY(1.1);
+
+                    background: $blue-gradient;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                }
+    
+                h2 {
+                    padding: 0.5rem 2rem;
+
+                    font-size: 2rem;
+                    font-weight: normal;
+
+                    color: $color-dark-1;
+
+                    transition: $transition;
+                }
             }
         }
     }
@@ -200,7 +245,15 @@ body {
 
     header {
         .welcome {
-            background-color: $color-dark-4-80;
+            .background {
+                background-color: $color-dark-0;
+            }
+
+            .text-container {    
+                h2 {
+                    color: $color-light-0;
+                }
+            }
         }
     }
 
