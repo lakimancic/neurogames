@@ -20,10 +20,11 @@
                 <button id="ga_button"><i class="fa-solid fa-dna"></i> Evolution Options</button>
                 <button id="nn_button"><i class="fa-solid fa-brain"></i> Neural Network Options</button>
                 <button id="start_game" class="start"><i class="fa-solid fa-play"></i> Start</button>
+                <button id="reset_game" class="reset"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
                 <button id="pause_game" class="pause" disabled><i class="fa-solid fa-pause"></i> Pause</button>
                 <button id="stop_game" class="stop" disabled><i class="fa-solid fa-stop"></i> Stop</button>
-                <button><i class="fa-solid fa-folder-open"></i> Load</button>
-                <button><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                <button id="load_game"><i class="fa-solid fa-folder-open"></i> Load</button>
+                <button id="save_game"><i class="fa-solid fa-floppy-disk"></i> Save</button>
             </ul>
         </div>
         <i class="fa-solid fa-moon"></i>
@@ -34,10 +35,10 @@
         </div>
         <div class="container2">
             <div class="upper">
-                <canvas id="nnCanvas" width="500" height="500"></canvas>
+                <canvas id="nnCanvas" width="10" height="10"></canvas>
             </div>
             <div class="lower">
-                <canvas id="gaCanvas" width="500" height="250"></canvas>
+                <canvas id="gaCanvas" width="10" height="10"></canvas>
             </div>
         </div>
     </main>
@@ -153,6 +154,34 @@
                 <div class="buttons">
                     <button class="save" id="save_ga">Save</button>
                     <button class="discard" id="discard_ga">Discard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="options_container" id="save_con">
+        <div class="options-outer">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <div class="options">
+                <h1><i class="fa-solid fa-floppy-disk"></i> Save Progress <i class="fa-solid fa-floppy-disk"></i></h1>
+                <p  class="error"></p>
+                <div class="row">
+                    Save file name: 
+                    <input type="text" id="save_filename" placeholder="Enter filename">
+                </div>
+                <div class="buttons">
+                    <button class="save" id="save_s">Save</button>
+                    <button class="discard" id="discard_s">Discard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="options_container" id="load_con">
+        <div class="options-outer">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <div class="options">
+                <h1><i class="fa-solid fa-open"></i> Load Progress <i class="fa-solid fa-open"></i></h1>
+                <h2>Choose saved file:</h2>
+                <div class="files">
                 </div>
             </div>
         </div>

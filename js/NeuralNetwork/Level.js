@@ -39,4 +39,15 @@ export default class Level {
 
         return outputs;
     }
+
+    set(level, activation) {
+        this.inputSize = level.inputSize;
+        this.outputSize = level.outputSize;
+
+        this.weights = JSON.parse(JSON.stringify(level.weights));
+
+        this.biases = JSON.parse(JSON.stringify(level.biases));
+
+        this.activation = ActivationFunctions[activation];
+    }
 }

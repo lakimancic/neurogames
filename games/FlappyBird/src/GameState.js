@@ -132,7 +132,6 @@ export default class GameState {
                 let medal = Math.floor(Math.min(this.bird.score - 10, 30) / 10);
                 let medalWidth = this.sprites.medals.width / 4;
 
-                // 15, 22
                 this.ctx.drawImage(
                     this.sprites.medals,
                     medal * medalWidth, 0, medalWidth, this.sprites.medals.height,
@@ -200,7 +199,7 @@ export default class GameState {
         }
 
         this.bird.update(dt, this.gameOn);
-        // this.bird.y < this.sprites.background.height - this.sprites.ground.height
+
         if(this.bird.alive) {
             this.ground1_x -= dt * consts.GROUND_SPEED;
             this.ground2_x -= dt * consts.GROUND_SPEED;

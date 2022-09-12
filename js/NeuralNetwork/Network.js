@@ -8,6 +8,7 @@ const COLOR_BLUE = '#007acc';
 export default class NeuralNetwork {
     constructor(layers) {
         this.levels = [];
+        this.layers = layers;
 
         for(let i=1;i<layers.length;i++) {
             this.levels[i-1] = new Level(layers[i-1].size, layers[i].size, layers[i].activation);
@@ -133,5 +134,11 @@ export default class NeuralNetwork {
         ctx.arc(canvas.width * 0.81, canvas.height * 0.94, canvas.width / 120, 0, 2*Math.PI);
         ctx.fillStyle = COLOR_BLUE;
         ctx.fill();
+    }
+
+    set(json) {
+        json.levels.forEach((level, ind) => {
+            this.levels[ind].set(level, this.layers[ind + 1].activation);
+        });
     }
 }

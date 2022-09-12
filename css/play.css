@@ -140,6 +140,7 @@ body main .container2 .upper {
   justify-content: center;
   align-items: center;
   width: 100%;
+  overflow: hidden;
 }
 body main .container2 .lower {
   flex: 1;
@@ -147,6 +148,7 @@ body main .container2 .lower {
   justify-content: center;
   align-items: center;
   width: 100%;
+  overflow: hidden;
 }
 body .options_container {
   width: 100%;
@@ -157,6 +159,9 @@ body .options_container {
   display: none;
   justify-content: center;
   align-items: center;
+}
+body .options_container#save_con .row {
+  margin: 3rem 2rem;
 }
 body .options_container .options-outer {
   position: relative;
@@ -283,6 +288,23 @@ body .options_container .options .layers .layer select {
   border: 0;
   color: #1e1e1e;
   padding: 0.1rem 0.5rem;
+}
+body .options_container .options .files {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+body .options_container .options .files .file {
+  width: 60%;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  border: 0.2rem solid #007acc;
+  border-bottom: 0;
+  cursor: pointer;
+}
+body .options_container .options .files .file:last-child {
+  border: 0.2rem solid #007acc;
 }
 body .options_container .options .buttons {
   display: flex;

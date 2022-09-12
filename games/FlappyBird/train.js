@@ -372,3 +372,61 @@ document.getElementById('stop_game').onclick = () => {
     document.getElementById('pause_game').disabled = true;
     document.getElementById('stop_game').disabled = true;
 };
+
+document.getElementById('reset_game').onclick = () => {
+    game.state.reset();
+
+    document.getElementById('start_game').disabled = false;
+    document.getElementById('pause_game').disabled = true;
+    document.getElementById('stop_game').disabled = true;
+};
+
+// Save / Load
+
+document.getElementById('save_game').onclick = () => {
+    document.getElementById('save_con').style.display = 'flex';
+};
+
+document.querySelector('#save_con .fa-circle-xmark').onclick = () => {
+    document.getElementById('save_con').style.removeProperty('display');
+}
+
+document.querySelector('#discard_s').onclick = () => {
+    document.getElementById('save_con').style.removeProperty('display');
+}
+
+document.querySelector('#save_s').onclick = () => {
+    if(document.getElementById('save_filename').value === '') {
+        document.querySelector('#save_con .error').innerHTML = "You didn't enter save file name!";
+        return;
+    }
+
+    game.state.save(document.getElementById('save_filename').value);
+
+    document.getElementById('save_con').style.removeProperty('display');
+}
+
+document.getElementById('load_game').onclick = () => {
+    document.getElementById('load_con').style.display = 'flex';
+
+    document.querySelector('#load_con .files').innerHTML = '';
+
+    game.state.saveObj.saveFiles.forEach(i => {
+        let file = document.createElement('div');
+        file.classList.add('file');
+
+        file.innerText = i.filename;
+
+        file.onclick = () => {
+            game.state.load(i.filename);
+
+            document.getElementById('load_con').style.removeProperty('display');
+        }
+
+        document.querySelector('#load_con .files').append(file);
+    });
+};
+
+document.querySelector('#load_con .fa-circle-xmark').onclick = () => {
+    document.getElementById('load_con').style.removeProperty('display');
+}

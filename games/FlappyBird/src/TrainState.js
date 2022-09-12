@@ -4,6 +4,15 @@ import * as consts from './constants.js';
 import ParentSelection from '../../../js/GeneticAlgorithm/ParentSelection.js';
 import SurvivorSelection from '../../../js/GeneticAlgorithm/SurvivorSelection.js';
 
+const formatTime = (time) => {
+    let floored = Math.floor(time);
+    let secs = floored % 60;
+    floored = Math.floor(floored / 60);
+    let mins = floored % 60;
+    floored = Math.floor(floored / 60);
+    return `${floored < 10 ? `0${floored}`: floored}:${mins < 10 ? `0${mins}`: mins}:${secs < 10 ? `0${secs}`: secs}`
+}
+
 export default class TrainState {
     /**
      * @param {HTMLCanvasElement} canvas
@@ -33,21 +42,13 @@ export default class TrainState {
 
         this.saveObj = JSON.parse(localStorage.getItem('flappybird')) || {};
 
+        if(!this.saveObj.saveFiles) this.saveObj.saveFiles = [];
+
         this.neuralNet = [
             { size: 2 },
             { size: 5, activation: 'sigmoid' },
             { size: 1, activation: 'relu' }
         ];
-
-        // this.evolution = {
-        //     population: 0,
-        //     parentSel: 'roulette',
-        //     crossover: 'onep',
-        //     mutation: 'reset',
-        //     mutationChance: 1,
-        //     survivorSel: 'fitness',
-        //     survivorPer: 40
-        // };
 
         this.evolution = {
             population: 50,
@@ -70,12 +71,19 @@ export default class TrainState {
         this.highscore = 0;
 
         this.resetNeuroEvolution();
+
+        this.time = 0;
     }
 
     resetNeuroEvolution() {
         this.init();
 
         this.generation = 1;
+
+        this.time = 0;
+        this.data = [];
+
+        this.highscore = 0;
 
         this.population = [];
 
@@ -89,13 +97,6 @@ export default class TrainState {
     }
 
     init() {
-        // this.bird = new Bird(this.canvas, this.ctx, this.sprites, this.pressedKeys, 50, (this.sprites.background.height - this.sprites.ground.height) / 2, 'ai');
-
-        // this.population = [];
-
-        // for(let i=0;i<50;i++) {
-        //     this.population[i] = new Bird(this.canvas, this.ctx, this.sprites, this.pressedKeys, 50, (this.sprites.background.height - this.sprites.ground.height) / 2, 'ai');
-        // }
 
         this.pipes = [];
         
@@ -151,6 +152,7 @@ export default class TrainState {
         let first = this.population.find(i => i.alive);
         this.ctx.fillText(`Score: ${first ? first.score : 0}`, 10 * this.scale, (this.sprites.background.height - 19) * this.scale);
         this.ctx.fillText(`Highscore: ${this.highscore}`, 10 * this.scale, (this.sprites.background.height - 12) * this.scale);
+        this.ctx.fillText(`Time: ${formatTime(this.time)}`, 10 * this.scale, (this.sprites.background.height - 5) * this.scale);
 
         if(document.querySelector('.container2 > .upper').style.display === 'flex') {
             if(first) {
@@ -165,6 +167,8 @@ export default class TrainState {
 
     update(dt) {
         if(this.paused) return;
+
+        if(this.gameOn) this.time += dt;
 
         this.scale = this.canvas.width / this.sprites.background.width;
 
@@ -195,8 +199,6 @@ export default class TrainState {
             if(bird.alive) bird.update(dt, this.gameOn);
         });
 
-        // this.bird.update(dt, this.gameOn);
-        // this.bird.y < this.sprites.background.height - this.sprites.ground.height
         if(alives > 0) {
             this.ground1_x -= dt * consts.GROUND_SPEED;
             this.ground2_x -= dt * consts.GROUND_SPEED;
@@ -247,48 +249,18 @@ export default class TrainState {
                 median: median
             };
 
-            console.log(this.data);
-
             this.generation++;
 
             this.population = newPopulation;
 
-            this.population.forEach(i => i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2));
+            this.population.forEach(i => {
+                i.prevFitness = (i.prevFitness * (i.age - 1) + i.fitness) / i.age;
+                i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2)
+            });
 
             this.init();
 
             this.gameOn = true;
-
-            // let newPopulation = [];
-
-            // this.population.sort((a, b) => b.fitness - a.fitness);
-
-            // for(let i=0;i<20;i++) {
-            //     newPopulation.push(this.population[i]);
-            // }
-
-            // for(let i=0;i<30;i++) {
-            //     let ind1, ind2;
-            //     ind1 = Math.floor(Math.random() * 30);
-            //     do{
-            //         ind2 = Math.floor(Math.random() * 30);
-            //     }while(ind1 === ind2);
-            //     newPopulation.push(this.population[ind1].mate(this.population[ind2]));
-            // }
-
-            // this.population = newPopulation;
-
-            // this.population.forEach(i => i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2));
-
-            // this.pipes = [];
-        
-            // for(let i=0;i<3;i++) this.pipes.push(new Pipe(this.canvas, this.ctx, this.sprites, this.sprites.background.width + (this.sprites.pipes.width / 2 + 10) / 2 + i * consts.PIPES_GAP));
-
-            // this.ground1_x = 0;
-            // this.ground2_x = this.sprites.ground.width;
-
-            // this.gameOn = true;
-            // this.gameOver = false;
         }
 
         this.population.forEach(bird => {
@@ -319,9 +291,71 @@ export default class TrainState {
 
     stop() {
         this.init();
-        this.paused = true;
+        this.paused = false;
+        this.gameOn = false;
 
         this.population.forEach(i => i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2));
+    }
+
+    reset() {
+        this.paused = false;
+        this.resetNeuroEvolution();
+    }
+
+    save(filename) {
+        let ind = this.saveObj.saveFiles.findIndex(i => i.filename === filename);
+
+        if(ind !== -1) this.saveObj.saveFiles[ind] = {
+            filename: filename,
+            population: this.population.map(i => JSON.parse(JSON.stringify(i.brain))),
+            generation: this.generation,
+            highscore: this.highscore,
+            time: this.time,
+            evolution: this.evolution,
+            neuralNet: this.neuralNet.map(i => JSON.parse(JSON.stringify(i))),
+            data: this.data.map(i => JSON.parse(JSON.stringify(i)))
+        }
+        else this.saveObj.saveFiles.push({
+            filename: filename,
+            population: this.population.map(i => JSON.parse(JSON.stringify(i.brain))),
+            generation: this.generation,
+            highscore: this.highscore,
+            time: this.time,
+            evolution: this.evolution,
+            neuralNet: this.neuralNet.map(i => JSON.parse(JSON.stringify(i))),
+            data: this.data.map(i => JSON.parse(JSON.stringify(i)))
+        });
+
+        localStorage.setItem('flappybird', JSON.stringify(this.saveObj));
+        this.saveObj = JSON.parse(JSON.stringify(this.saveObj));
+    }
+
+    load(filename) {
+        let saveFileObj = this.saveObj.saveFiles.find(i => i.filename === filename);
+
+        this.neuralNet = [];
+
+        saveFileObj.neuralNet.forEach(i => {
+            this.neuralNet.push({...i});
+        });
+
+        this.evolution = {...saveFileObj.evolution};
+
+        this.reset();
+
+        this.generation = saveFileObj.generation;
+        this.highscore = saveFileObj.highscore;
+        this.time = saveFileObj.time;
+
+        this.data = [];
+
+        saveFileObj.data.forEach(i => {
+            this.data.push({...i});
+        });
+
+        saveFileObj.population.forEach((i, ind) => {
+            this.population[ind].brain.set(i);
+        });
     }
 
     visualizeChart() {
