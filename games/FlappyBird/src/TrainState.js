@@ -11,7 +11,7 @@ const formatTime = (time) => {
     let mins = floored % 60;
     floored = Math.floor(floored / 60);
     return `${floored < 10 ? `0${floored}`: floored}:${mins < 10 ? `0${mins}`: mins}:${secs < 10 ? `0${secs}`: secs}`
-}
+};
 
 export default class TrainState {
     /**

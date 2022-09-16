@@ -96,6 +96,25 @@ export default class GameState {
             );
             this.ctx.stroke();
         }
+
+        this.ctx.font = `${10 * this.scale}px Consolas`;
+        this.ctx.fillStyle = consts.COLORS.DARK_GREEN;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+
+        if(this.gameOver) {
+            this.ctx.fillText(
+                `Press Space to try again!`,
+                this.canvas.width / 2,
+                100 * this.scale
+            );
+        } else if(!this.gameOn) {
+            this.ctx.fillText(
+                `Press any Movement key to start game!`,
+                this.canvas.width / 2,
+                100 * this.scale
+            );
+        }
     }
 
     renderNumber(num, x, y) {
@@ -113,34 +132,65 @@ export default class GameState {
 
     update(dt) {
         this.scale = this.canvas.width / 400;
-
+        
         this.snake.update(dt, () => {
             if(this.snake.score > (this.saveObj.highscore || 0)) {
                 this.saveObj.highscore = this.snake.score;
 
                 localStorage.setItem('snakegame', JSON.stringify(this.saveObj));
-
-                this.gameOver = true;
-                this.gameOn = false;
             }
+
+            this.gameOver = true;
+            this.gameOn = false;
+
         }, this.gameOn);
 
         if(this.gameOver) {
-
+            if(
+                (this.pressedKeys[' '] && !this.prevPressedKeys[' '])
+            ) {
+                this.snake = new Snake(this.canvas, this.ctx, this.sprites, this.pressedKeys, 19, 12);
+                this.gameOver = false;
+            }
         }
         else if(!this.gameOn) {
             if(
                 (this.pressedKeys['a'] && !this.prevPressedKeys['a']) ||
-                (this.pressedKeys['ArrowLeft'] && !this.prevPressedKeys['ArrowLeft']) ||
+                (this.pressedKeys['ArrowLeft'] && !this.prevPressedKeys['ArrowLeft'])
+            ) {
+                this.gameOn = true;
+                this.snake.randomFood();
+            }
+            else if(
                 (this.pressedKeys['d'] && !this.prevPressedKeys['d']) ||
-                (this.pressedKeys['ArrowRight'] && !this.prevPressedKeys['ArrowRight']) ||
+                (this.pressedKeys['ArrowRight'] && !this.prevPressedKeys['ArrowRight'])
+            ) {
+                this.snake.snake = this.snake.snake.reverse();
+                console.log(this.snake)
+                this.snake.direction = 'right';
+                this.snake.nextDirection = 'right';
+
+                this.gameOn = true;
+                this.snake.randomFood();
+            }
+            else if(
                 (this.pressedKeys['w'] && !this.prevPressedKeys['w']) ||
-                (this.pressedKeys['ArrowUp'] && !this.prevPressedKeys['ArrowUp']) ||
+                (this.pressedKeys['ArrowUp'] && !this.prevPressedKeys['ArrowUp'])
+            ) {
+                this.snake.direction = 'up';
+                this.snake.nextDirection = 'up';
+
+                this.gameOn = true;
+                this.snake.randomFood();
+            }
+            else if(
                 (this.pressedKeys['s'] && !this.prevPressedKeys['s']) ||
                 (this.pressedKeys['ArrowDown'] && !this.prevPressedKeys['ArrowDown'])
             ) {
-                this.gameOn = true;
+                this.snake.direction = 'down';
+                this.snake.nextDirection = 'down';
 
+                this.gameOn = true;
                 this.snake.randomFood();
             }
         }

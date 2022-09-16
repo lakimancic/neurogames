@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game - Training</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="../../css/play.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
+</head>
+<body class="">
+    <header>
+        <div class="welcome">
+            <div class="title-con">
+                <img src="../../images/logo.png" alt="logo" />
+                <h1>NeuroGames</h1>
+            </div>
+            <ul class="menu">
+                <button id="ga_button"><i class="fa-solid fa-dna"></i> Evolution Options</button>
+                <button id="nn_button"><i class="fa-solid fa-brain"></i> Neural Network Options</button>
+                <button id="start_game" class="start"><i class="fa-solid fa-play"></i> Start</button>
+                <button id="reset_game" class="reset"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
+                <button id="pause_game" class="pause" disabled><i class="fa-solid fa-pause"></i> Pause</button>
+                <button id="stop_game" class="stop" disabled><i class="fa-solid fa-stop"></i> Stop</button>
+                <button id="load_game"><i class="fa-solid fa-folder-open"></i> Load</button>
+                <button id="save_game"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </ul>
+        </div>
+        <i class="fa-solid fa-moon"></i>
+    </header>
+    <main>
+        <div class="container">
+            <canvas id="myCanvas" width="432" height="768"></canvas>
+        </div>
+        <div class="container2">
+            <div class="upper">
+                <canvas id="nnCanvas" width="10" height="10"></canvas>
+            </div>
+            <div class="lower">
+                <canvas id="gaCanvas" width="10" height="10"></canvas>
+            </div>
+        </div>
+    </main>
+    <div class="options_container" id="nn_options">
+        <div class="options-outer">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <div class="options">
+                <h1><i class="fa-solid fa-brain"></i> Neural Network Options <i class="fa-solid fa-brain"></i></h1>
+                <div class="cb_con">
+                    <input type="checkbox" id="visualize_nn">
+                    <label for="visualize_nn">Visualize Neural Network</label>
+                </div>
+                <h2>Layers</h2>
+                <p  class="error"></p>
+                <div class="row">
+                    <input type="number" id="neurons_num" placeholder="Neurons">
+                    <select id="activation">
+                        <option value="" selected hidden>Activation function</option>
+                        <option value="sigmoid">Sigmoid</option>
+                        <option value="relu">ReLU</option>
+                        <option value="tanh">tanh</option>
+                    </select>
+                    <button id="add_layer">Add Layer</button>
+                </div>
+                <div class="layers">
+                </div>
+                <div class="buttons">
+                    <button class="save" id="save_nn">Save</button>
+                    <button class="discard" id="discard_nn">Discard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="options_container" id="ga_options">
+        <div class="options-outer">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <div class="options">
+                <h1><i class="fa-solid fa-dna"></i> Evolution Options <i class="fa-solid fa-dna"></i></h1>
+                <p class="error"></p>
+                <div class="cb_con">
+                    <input type="checkbox" id="visualize_ga" />
+                    <label for="visualize_ga">Show Generation / Fitness Chart</label>
+                </div>
+                <div class="cb_row">
+                    <input type="checkbox" id="show_best" checked disabled/>
+                    <label for="show_best">Best</label>
+                    <input type="checkbox" id="show_worst" checked disabled/>
+                    <label for="show_worst">Worst</label>
+                    <input type="checkbox" id="show_mean" checked disabled/>
+                    <label for="show_mean">Mean</label>
+                    <input type="checkbox" id="show_median" checked disabled/>
+                    <label for="show_median">Median</label>
+                </div>
+                <h2>Population</h2>
+                <div class="row">
+                    Number of individuals: 
+                    <input type="number" id="population_num" placeholder="Enter number">
+                    <button id="set_pop">Set Population</button>
+                </div>
+                <div class="row">
+                    Current number of individuals: <span class="num" id="pop_num">100</span>
+                </div>
+                <h2>Parent Selection</h2>
+                <div class="row">
+                    Parent Selection Method: 
+                    <select id="parent_sel">
+                        <option value="roulette">Roulette Wheel Selection</option>
+                        <option value="sus">Stochasstic Universal Sampling</option>
+                        <option value="tour">Tournament Selection</option>
+                        <option value="rand">Random Selection</option>
+                    </select>
+                </div>
+                <h2>Crossover</h2>
+                <div class="row">
+                    Crossover Method: 
+                    <select id="crossover">
+                        <option value="onep">One Point Crossover</option>
+                        <option value="multip">Multi Point Crossover</option>
+                        <option value="unif">Uniform Crossover</option>
+                        <option value="avg">Arithmetic Crossover</option>
+                    </select>
+                </div>
+                <h2>Mutation</h2>
+                <div class="row">
+                    Mutation Method: 
+                    <select id="mutation">
+                        <option value="reset">Random Resetting</option>
+                        <option value="add">Random Addition</option>
+                        <option value="inverse">Additive Inverse</option>
+                    </select>
+                </div>
+                <div class="row">
+                    Current mutation chance: <span class="num" id="mut_chance">1%</span>
+                </div>
+                <div class="row">
+                    Mutation chance: 
+                    <input type="number" id="mutation_chance" placeholder="Enter chance">
+                    <button id="set_mut">Set chance</button>
+                </div>
+                <h2>Survivor Selection</h2>
+                <div class="rb_con">
+                    <input type="radio" name="selection" id="age" />
+                    <label for="age">Age Based</label>
+                    <input type="radio" name="selection" id="fit" checked/>
+                    <label for="fit">Fitness Based</label>
+                </div>
+                <div class="row">
+                    Survivors Persentage: <span class="num" id="surv_per">40%</span>
+                </div>
+                <div class="row range_con">
+                    <input type="range" id="surviv" value="40" max="100" min="0">
+                </div>
+                <div class="buttons">
+                    <button class="save" id="save_ga">Save</button>
+                    <button class="discard" id="discard_ga">Discard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="options_container" id="save_con">
+        <div class="options-outer">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <div class="options">
+                <h1><i class="fa-solid fa-floppy-disk"></i> Save Progress <i class="fa-solid fa-floppy-disk"></i></h1>
+                <p  class="error"></p>
+                <div class="row">
+                    Save file name: 
+                    <input type="text" id="save_filename" placeholder="Enter filename">
+                </div>
+                <div class="buttons">
+                    <button class="save" id="save_s">Save</button>
+                    <button class="discard" id="discard_s">Discard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="options_container" id="load_con">
+        <div class="options-outer">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <div class="options">
+                <h1><i class="fa-solid fa-open"></i> Load Progress <i class="fa-solid fa-open"></i></h1>
+                <h2>Choose saved file:</h2>
+                <div class="files">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="particles-js"></div>
+    <!-- SCRIPTS -->
+    <script src="../../js/lib/particles.min.js"></script>
+    <script src="../../js/main.js"></script>
+    <script type="module" src="./train.js"></script>
+</body>
+</html>

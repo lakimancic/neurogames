@@ -1,11 +1,14 @@
 import * as consts from './constants.js';
+import NeuralNetwork from '../../../js/NeuralNetwork/Network.js';
+import Crossover from '../../../js/GeneticAlgorithm/Crossover.js';
+import Mutation from '../../../js/GeneticAlgorithm/Mutation.js';
 
 const directions = {
     'left': { x: -1, y: 0 },
     'right': { x: 1, y: 0 },
     'up': { x: 0, y: -1 },
     'down': { x: 0, y: 1 },
-}
+};
 
 export default class Snake {
     /**
@@ -36,10 +39,20 @@ export default class Snake {
 
         this.eaten = [];
 
+        this.fitness = 0;
+        this.prevFitness = 0;
         this.score = 0;
+
+        this.age = 0;
     }
 
-    render(scale, gameOn) {
+    setNeuralNet(nn) {
+        this.brain = new NeuralNetwork(nn);
+
+        this.nn = nn;
+    }
+
+    render(scale) {
         this.snake.forEach(i => {
             this.ctx.fillStyle = consts.COLORS.BLACK;
             this.ctx.fillRect(
@@ -94,16 +107,17 @@ export default class Snake {
 
             if(this.snake[0].x + directions[this.direction].x < 0 || this.snake[0].x + directions[this.direction].x >= consts.GRID_WIDTH) {
                 this.alive = false;
+                if(death) death();
                 return;
             }
             else if(this.snake[0].y + directions[this.direction].y < 0 || this.snake[0].y + directions[this.direction].y >= consts.GRID_HEIGHT) {
                 this.alive = false;
-                death();
+                if(death) death();
                 return;
             }
             else if(this.snake.findIndex(i => i.y === this.snake[0].y + directions[this.direction].y && i.x === this.snake[0].x + directions[this.direction].x) !== -1) {
                 this.alive = false;
-                death();
+                if(death) death();
                 return;
             }
 

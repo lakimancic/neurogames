@@ -1,5 +1,6 @@
 const COLORS = {
     'GREEN': '#9ac503',
+    'DARK_GREEN': '#567607',
     'BLACK': '#000000' 
 };
 const BLOCK_SIZE = 3;
