@@ -27,6 +27,7 @@ $color-light-2: #dadad9;
 $color-light-3: #d2d2cf;
 $color-light-4: #c1c1bd;
 $color-light-4-80: rgba(193, 193, 189, 0.8);
+$color-gray: #808080;
 $color-blue: #007acc;
 $color-light-blue: #589ecd;
 $color-orange: #ff8533;
@@ -213,6 +214,12 @@ body {
 
                         &.train {
                             background-color: $color-light-blue;
+
+                            &:disabled {
+                                background-color: $color-gray;
+
+                                cursor: not-allowed;
+                            }
                         }
                     }
                 }

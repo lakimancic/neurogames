@@ -67,12 +67,16 @@ export default {
         shuffle(indeces);
 
         let first = indeces.slice(0, half);
-        let max1 = Math.max(...first.map(k => population[k].fitness));
-        let i = first.find(k => population[k].fitness === max1);
+        let i = 0;
+        for(let k=1;k<half;k++) {
+            if(first[k] > first[i]) i = k;
+        }
 
         let second = indeces.slice(half);
-        let max2 = Math.max(...second.map(k => population[k].fitness));
-        let j = second.find(k => population[k].fitness === max2);
+        let j = 0;
+        for(let k=1;k<half;k++) {
+            if(second[k] > second[j]) j = k;
+        }
 
         return [i, j];
     },

@@ -36,13 +36,14 @@ export default class Snake {
         this.timer = 0;
 
         this.alive = true;
-        this.lifeLeft = consts.GRID_WIDTH * consts.GRID_HEIGHT;
+        this.lifeLeft = 100;
 
         this.eaten = [];
 
         this.fitness = 0;
         this.prevFitness = 0;
         this.score = 0;
+        this.staleness = 0;
 
         this.age = 0;
     }
@@ -58,7 +59,8 @@ export default class Snake {
         this.y = y;
 
         this.alive = true;
-        this.lifeLeft = consts.GRID_WIDTH * consts.GRID_HEIGHT;
+        this.lifeLeft = 100;
+        this.steps = 0;
 
         this.snake = [
             { x: x, y }, { x: x + 1, y }, { x: x + 2, y }
@@ -70,7 +72,8 @@ export default class Snake {
         this.y = y;
 
         this.alive = true;
-        this.lifeLeft = consts.GRID_WIDTH * consts.GRID_HEIGHT;
+        this.lifeLeft = 100;
+        this.steps = 0;
 
         this.fitness = 0;
         this.score = 0;
@@ -129,8 +132,10 @@ export default class Snake {
             this.timer += dt;
         } else {
             this.lifeLeft--;
+            this.steps++;
 
             if(this.lifeLeft === 0) {
+                this.fitness = this.steps * this.steps * Math.pow(2, this.score);
                 this.alive = false;
                 return;
             }
@@ -142,16 +147,19 @@ export default class Snake {
 
             if(this.snake[0].x + directions[this.direction].x < 0 || this.snake[0].x + directions[this.direction].x >= consts.GRID_WIDTH) {
                 this.alive = false;
+                this.fitness = this.steps * this.steps * Math.pow(2, this.score);
                 if(death) death();
                 return;
             }
             else if(this.snake[0].y + directions[this.direction].y < 0 || this.snake[0].y + directions[this.direction].y >= consts.GRID_HEIGHT) {
                 this.alive = false;
+                this.fitness = this.steps * this.steps * Math.pow(2, this.score);
                 if(death) death();
                 return;
             }
             else if(this.snake.findIndex(i => i.y === this.snake[0].y + directions[this.direction].y && i.x === this.snake[0].x + directions[this.direction].x) !== -1) {
                 this.alive = false;
+                this.fitness = this.steps * this.steps * Math.pow(2, this.score);
                 if(death) death();
                 return;
             }
@@ -159,7 +167,7 @@ export default class Snake {
             if(this.snake[0].x === this.food.x && this.snake[0].y === this.food.y) {
                 this.eaten.push(this.food);
                 this.score++;
-                this.fitness += 1000 + this.lifeLeft * 100 / ( consts.GRID_WIDTH * consts.GRID_HEIGHT );
+                this.lifeLeft += 100;
 
                 this.randomFood();
             }

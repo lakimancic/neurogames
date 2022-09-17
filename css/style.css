@@ -134,6 +134,10 @@ body main .games .game .buttons button {
 body main .games .game .buttons button.train {
   background-color: #589ecd;
 }
+body main .games .game .buttons button.train:disabled {
+  background-color: #808080;
+  cursor: not-allowed;
+}
 body::-webkit-scrollbar {
   width: 0.5rem;
 }
