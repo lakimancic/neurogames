@@ -40,9 +40,9 @@ export default class TrainState {
         if(!this.saveObj.saveFiles) this.saveObj.saveFiles = [];
 
         this.neuralNet = [
-            { size: 24 },
-            { size: 10, activation: 'sigmoid' },
-            { size: 4, activation: 'relu' }
+            { size: 4 },
+            { size: 5, activation: 'sigmoid' },
+            { size: 3, activation: 'relu' }
         ];
 
         this.evolution = {
@@ -54,8 +54,10 @@ export default class TrainState {
             survivorSel: 'fitness',
             survivorPer: 40
         };
+        this.EPOCHS_COUNT = 20;
 
         this.generation = 1;
+        this.epoch = 0;
         this.population = [];
 
         this.data = [];
@@ -64,6 +66,8 @@ export default class TrainState {
         this.paused = false;
 
         this.highscore = 0;
+
+        this.timer = 0;
 
         this.resetNeuroEvolution();
     }
@@ -84,6 +88,7 @@ export default class TrainState {
         for(let i=0;i<this.evolution.population;i++) {
             this.population[i] = new Snake(this.canvas, this.ctx, this.sprites, this.pressedKeys, 19, 12, 'ai');
             this.population[i].setNeuralNet(this.neuralNet);
+            this.population[i].randomFood();
         }
 
         this.survivorSelectionMethod = SurvivorSelection[this.evolution.survivorSel];
@@ -162,7 +167,7 @@ export default class TrainState {
         let alives = this.population.reduce((a, b) => a + (b.alive ? 1 : 0), 0);
         this.ctx.fillText(`Alive: ${alives} / ${this.population.length}`, 20 * this.scale, 27 * this.scale);
         let first = this.population.find(i => i.alive);
-        this.ctx.fillText(`Score: ${first ? first.score : 0}`, 20 * this.scale, 39 * this.scale);
+        this.ctx.fillText(`Score: ${Math.max(...this.population.map(i => i.score))}`, 20 * this.scale, 39 * this.scale);
         this.ctx.fillText(`Highscore: ${this.highscore}`, 80 * this.scale, 15 * this.scale);
         this.ctx.fillText(`Time: ${formatTime(this.time)}`, 80 * this.scale, 27 * this.scale);
 
@@ -180,13 +185,135 @@ export default class TrainState {
     update(dt) {
         if(this.paused) return;
 
-        if(this.gameOn) this.time += dt;
+        if(this.gameOn) {
+            this.timer += dt;
+            this.time += dt;
+        }
 
         this.scale = this.canvas.width / 400;
 
         let alives = this.population.reduce((a, b) => a + (b.alive ? 1 : 0), 0);
 
+        if(this.timer >= 0.01) {
+            this.population.forEach(snake => {
+                let inputs = [];
+                let head = snake.snake[0];
+                const DIRS = [
+                    { name:'right', x: 1, y: 0 },
+                    { name:'up', x: 0, y: -1 },
+                    { name:'left', x: -1, y: 0 },
+                    { name:'down', x: 0, y: 1 }
+                ];
+                let dirInd = DIRS.findIndex(i => i.name === snake.direction);
+                let left = DIRS[(dirInd + 3) % 4], front = DIRS[dirInd], right = DIRS[(dirInd + 1) % 4];
+                if(
+                    head.x + left.x >= consts.GRID_WIDTH || head.x + left.x < 0 ||
+                    head.y + left.y >= consts.GRID_HEIGHT || head.y + left.y < 0 ||
+                    snake.snake.slice(1).find(i => i.x === head.x + left.x && i.y === head.y + left.y)
+                ) inputs.push(1);
+                else inputs.push(0);
+
+                if(
+                    head.x + front.x >= consts.GRID_WIDTH || head.x + front.x < 0 ||
+                    head.y + front.y >= consts.GRID_HEIGHT || head.y + front.y < 0 ||
+                    snake.snake.slice(1).find(i => i.x === head.x + front.x && i.y === head.y + front.y)
+                ) inputs.push(1);
+                else inputs.push(0);
+
+                if(
+                    head.x + right.x >= consts.GRID_WIDTH || head.x + right.x < 0 ||
+                    head.y + right.y >= consts.GRID_HEIGHT || head.y + right.y < 0 ||
+                    snake.snake.slice(1).find(i => i.x === head.x + right.x && i.y === head.y + right.y)
+                ) inputs.push(1);
+                else inputs.push(0);
+
+                const dy = snake.food.y - head.y;
+                const dx = snake.food.x - head.x;
+
+                inputs.push(dy / Math.sqrt(dx*dx + dy*dy));
+
+                let outputs = snake.brain.feedForward(inputs);
+
+                let maxInd = 0;
+                for(let i=1;i<outputs.length;i++) if(outputs[i] > outputs[maxInd]) maxInd = i;
+
+                if(maxInd === 0) snake.nextDirection = left.name;
+                else if(maxInd === 1) snake.nextDirection = front.name;
+                else snake.nextDirection = right.name;
+
+                snake.update(dt, null, this.gameOn);
+            });
+            this.timer = 0;
+        }
+
+        if(this.gameOn && alives === 0) {
+            this.highscore = Math.max(...[this.highscore, ...this.population.map(i => i.score)]);
+
+            let newPopulation = this.survivorSelectionMethod(this.population, this.evolution.survivorPer);
+
+            for(let i=0;i<newPopulation.length;i++) {
+                newPopulation[i].age++;
+            }
+
+            while(newPopulation.length < this.evolution.population) {
+                let parents = this.parentSelectionMethod(this.population);
+
+                newPopulation.push(this.population[parents[0]].mate(this.population[parents[1]], this.evolution.mutation, this.evolution.mutationChance, this.evolution.crossover));
+            }
+
+            let sum = this.population.reduce((a, b) => a + b.score, 0);
+            if(this.population.length > 0) sum /= this.population.length;
+            else sum = 0;
+
+            let pomPopulation = [...this.population];
+            pomPopulation.sort((a, b) => (b.score - a.score));
+
+            let median = pomPopulation[Math.floor(this.population.length / 2)].score;
+            if(this.population.length % 2 === 0) median = (median + pomPopulation[Math.floor(this.population.length / 2) + 1].score) / 2;
+
+            this.data[this.generation - 1] = {
+                best : Math.max(...[0, ...this.population.map(i => i.score)]),
+                worst: Math.min(...[0, ...this.population.map(i => i.score)]),
+                mean: sum,
+                median: median
+            };
+
+            this.generation++;
+
+            this.population = newPopulation;
+
+            this.population.forEach(i => {
+                i.prevFitness = (i.prevFitness * (i.age - 1) + i.fitness) / i.age;
+                i.restart(19, 12);
+                i.randomFood();
+            });
+
+            this.gameOn = true;
+        }
+
         this.prevPressedKeys = { ...this.pressedKeys };
+    }
+
+    pause() {
+        this.paused = true;
+    }
+
+    start() {
+        this.paused = false;
+        this.gameOn = true;
+    }
+
+    stop() {
+        this.init();
+        this.paused = false;
+        this.gameOn = false;
+
+        // this.population.forEach(i => i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2));
+    }
+
+    reset() {
+        this.paused = false;
+        this.resetNeuroEvolution();
     }
 
     visualizeChart() {

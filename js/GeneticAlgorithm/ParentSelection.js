@@ -30,17 +30,14 @@ export default {
 
         let j = 0;
 
-        do {
-            let second = sum * Math.random();
-            j = 0;
+        let second = sum * Math.random();
 
-            pomsum = population[0].fitness;
+        pomsum = population[0].fitness;
 
-            while(pomsum < second) {
-                j++;
-                pomsum += population[j].fitness;
-            }
-        } while(i === j);
+        while(pomsum < second) {
+            j++;
+            pomsum += population[j].fitness;
+        }
 
         return [i, j];
     },

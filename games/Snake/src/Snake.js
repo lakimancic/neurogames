@@ -36,6 +36,7 @@ export default class Snake {
         this.timer = 0;
 
         this.alive = true;
+        this.lifeLeft = consts.GRID_WIDTH * consts.GRID_HEIGHT;
 
         this.eaten = [];
 
@@ -50,6 +51,33 @@ export default class Snake {
         this.brain = new NeuralNetwork(nn);
 
         this.nn = nn;
+    }
+
+    restartEpoch(x, y) {
+        this.x = x;
+        this.y = y;
+
+        this.alive = true;
+        this.lifeLeft = consts.GRID_WIDTH * consts.GRID_HEIGHT;
+
+        this.snake = [
+            { x: x, y }, { x: x + 1, y }, { x: x + 2, y }
+        ]
+    } 
+
+    restart(x, y) {
+        this.x = x;
+        this.y = y;
+
+        this.alive = true;
+        this.lifeLeft = consts.GRID_WIDTH * consts.GRID_HEIGHT;
+
+        this.fitness = 0;
+        this.score = 0;
+
+        this.snake = [
+            { x: x, y }, { x: x + 1, y }, { x: x + 2, y }
+        ]
     }
 
     render(scale) {
@@ -95,13 +123,20 @@ export default class Snake {
     update(dt, death, gameOn) {
         if(!this.alive || !gameOn) return;
 
-        this.timer += dt;
-
         if(this.control === 'player') {
             this.handleInput();
+
+            this.timer += dt;
+        } else {
+            this.lifeLeft--;
+
+            if(this.lifeLeft === 0) {
+                this.alive = false;
+                return;
+            }
         }
 
-        if(this.timer >= 0.1) {
+        if(this.timer >= 0.1 || this.control === 'ai') {
             this.direction = this.nextDirection;
             this.timer = 0;
 
@@ -124,6 +159,7 @@ export default class Snake {
             if(this.snake[0].x === this.food.x && this.snake[0].y === this.food.y) {
                 this.eaten.push(this.food);
                 this.score++;
+                this.fitness += 1000 + this.lifeLeft * 100 / ( consts.GRID_WIDTH * consts.GRID_HEIGHT );
 
                 this.randomFood();
             }
@@ -180,5 +216,34 @@ export default class Snake {
                 y: Math.floor(Math.random() * (consts.GRID_HEIGHT - 1))
             };
         }while(this.snake.findIndex(i => i.x === this.food.x && i.y === this.food.y) !== -1)
+    }
+
+    /**
+     * 
+     * @param {Snake} snake 
+     */
+     mate(snake, mutationType, mutationChance, crossoverType) {
+        //new Snake(this.canvas, this.ctx, this.sprites, this.pressedKeys, 19, 12, 'ai');
+        let child = new Snake(this.canvas, this.ctx, this.sprites, this.pressedKeys, this.x, this.y, this.control);
+        child.setNeuralNet(this.nn);
+
+        for(let i=0;i<this.brain.levels.length;i++) {
+            for(let j=0;j<this.brain.levels[i].weights.length; j++) {
+                let crossover = new Crossover(crossoverType, this.brain.levels[i].weights[j].length);
+                for(let k=0;k<this.brain.levels[i].weights[j].length; k++) {
+                    child.brain.levels[i].weights[j][k] = crossover.choose(snake.brain.levels[i].weights[j][k], this.brain.levels[i].weights[j][k], k)[0];
+
+                    child.brain.levels[i].weights[j][k] = Mutation[mutationType](child.brain.levels[i].weights[j][k], mutationChance);
+                }
+            }
+            let crossover = new Crossover(crossoverType, this.brain.levels[i].biases.length);
+            for(let j=0;j<this.brain.levels[i].biases.length;j++) {
+                child.brain.levels[i].biases[j] = crossover.choose(snake.brain.levels[i].biases[j], this.brain.levels[i].biases[j], j)[0];
+
+                child.brain.levels[i].biases[j] = Mutation[mutationType](child.brain.levels[i].biases[j], mutationChance);
+            }
+        }
+
+        return child;
     }
 }

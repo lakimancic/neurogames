@@ -17,11 +17,11 @@ export default class Level {
     randomize() {
         for(let i=0;i<this.inputSize;i++) {
             for(let j=0;j<this.outputSize;j++) {
-                this.weights[i][j] = Math.random() * 4 - 2;
+                this.weights[i][j] = Math.random() * 2 - 1;
             }
         }
 
-        for(let i=0;i<this.biases.length;i++) this.biases[i] = Math.random() * 4 - 2;
+        for(let i=0;i<this.biases.length;i++) this.biases[i] = Math.random() * 2 - 1;
     }
 
     feedForward(inputs) {
