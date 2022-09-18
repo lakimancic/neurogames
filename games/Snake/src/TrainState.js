@@ -40,9 +40,9 @@ export default class TrainState {
         if(!this.saveObj.saveFiles) this.saveObj.saveFiles = [];
 
         this.neuralNet = [
-            { size: 4 },
-            { size: 5, activation: 'sigmoid' },
-            { size: 3, activation: 'relu' }
+            { size: 5 },
+            { size: 6, activation: 'sigmoid' },
+            { size: 3, activation: 'sigmoid' }
         ];
 
         this.evolution = {
@@ -195,6 +195,8 @@ export default class TrainState {
         let alives = this.population.reduce((a, b) => a + (b.alive ? 1 : 0), 0);
 
         if(this.timer >= 0) {
+            if(!this.gameOn) return;
+
             this.population.forEach(snake => {
                 let inputs = [];
                 let head = snake.snake[0];
@@ -209,28 +211,37 @@ export default class TrainState {
                 if(
                     head.x + left.x >= consts.GRID_WIDTH || head.x + left.x < 0 ||
                     head.y + left.y >= consts.GRID_HEIGHT || head.y + left.y < 0 ||
-                    snake.snake.slice(1).find(i => i.x === head.x + left.x && i.y === head.y + left.y)
+                    snake.snake.slice(1).find(i => i.x === head.x + left.x && i.y === head.y + left.y) !== undefined
                 ) inputs.push(1);
-                else inputs.push(-1);
+                else inputs.push(0);
 
                 if(
                     head.x + front.x >= consts.GRID_WIDTH || head.x + front.x < 0 ||
                     head.y + front.y >= consts.GRID_HEIGHT || head.y + front.y < 0 ||
-                    snake.snake.slice(1).find(i => i.x === head.x + front.x && i.y === head.y + front.y)
+                    snake.snake.slice(1).find(i => i.x === head.x + front.x && i.y === head.y + front.y) !== undefined
                 ) inputs.push(1);
-                else inputs.push(-1);
+                else inputs.push(0);
 
                 if(
                     head.x + right.x >= consts.GRID_WIDTH || head.x + right.x < 0 ||
                     head.y + right.y >= consts.GRID_HEIGHT || head.y + right.y < 0 ||
-                    snake.snake.slice(1).find(i => i.x === head.x + right.x && i.y === head.y + right.y)
+                    snake.snake.slice(1).find(i => i.x === head.x + right.x && i.y === head.y + right.y) !== undefined
                 ) inputs.push(1);
-                else inputs.push(-1);
+                else inputs.push(0);
 
-                const dy = snake.food.y - head.y;
-                const dx = snake.food.x - head.x;
-
-                inputs.push(dy / Math.sqrt(dx*dx + dy*dy));
+                if(snake.direction === 'up') {
+                    inputs.push(snake.food.x < head.x ? -1 : snake.food.x > head.x ? 1 : 0);
+                    inputs.push(snake.food.y < head.y ? -1 : snake.food.y > head.y ? 1 : 0);
+                } else if(snake.direction === 'down') {
+                    inputs.push(snake.food.x < head.x ? 1 : snake.food.x > head.x ? -1 : 0);
+                    inputs.push(snake.food.y < head.y ? 1 : snake.food.y > head.y ? -1 : 0);
+                } else if(snake.direction === 'left') {
+                    inputs.push(snake.food.y < head.y ? 1 : snake.food.y > head.y ? -1 : 0);
+                    inputs.push(snake.food.x < head.x ? -1 : snake.food.x > head.x ? 1 : 0);
+                } else {
+                    inputs.push(snake.food.y < head.y ? -1 : snake.food.y > head.y ? 1 : 0);
+                    inputs.push(snake.food.x < head.x ? 1 : snake.food.x > head.x ? -1 : 0);
+                }
 
                 // console.log(inputs);
                 // throw 1;
@@ -254,20 +265,8 @@ export default class TrainState {
 
             let newPopulation = this.survivorSelectionMethod(this.population, this.evolution.survivorPer);
 
-            let forRemove = [];
             for(let i=0;i<newPopulation.length;i++) {
                 newPopulation[i].age++;
-                if(newPopulation[i].fitness <= newPopulation[i].oldFitness) newPopulation[i].staleness++;
-                else newPopulation[i].staleness = 0;
-
-                if(newPopulation[i].staleness == 10) {
-                    forRemove.push(i);
-                }
-            }
-            let popSize = newPopulation.length;
-            forRemove.reverse().forEach(i => newPopulation.splice(i, 1));
-            while(newPopulation.length < popSize) {
-                newPopulation.push(new Snake(this.canvas, this.ctx, this.sprites, this.pressedKeys, 19, 12, 'ai'));
             }
 
             while(newPopulation.length < this.evolution.population) {

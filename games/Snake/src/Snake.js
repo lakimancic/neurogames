@@ -80,7 +80,8 @@ export default class Snake {
 
         this.snake = [
             { x: x, y }, { x: x + 1, y }, { x: x + 2, y }
-        ]
+        ];
+        this.eaten = [];
     }
 
     render(scale) {
@@ -136,6 +137,7 @@ export default class Snake {
 
             if(this.lifeLeft === 0) {
                 this.fitness = this.steps * this.steps * Math.pow(2, this.score);
+                this.fitness = this.score * 1000 + this.steps;
                 this.alive = false;
                 return;
             }
@@ -148,12 +150,14 @@ export default class Snake {
             if(this.snake[0].x + directions[this.direction].x < 0 || this.snake[0].x + directions[this.direction].x >= consts.GRID_WIDTH) {
                 this.alive = false;
                 this.fitness = this.steps * this.steps * Math.pow(2, this.score);
+                this.fitness = this.score * 1000 + this.steps;
                 if(death) death();
                 return;
             }
             else if(this.snake[0].y + directions[this.direction].y < 0 || this.snake[0].y + directions[this.direction].y >= consts.GRID_HEIGHT) {
                 this.alive = false;
                 this.fitness = this.steps * this.steps * Math.pow(2, this.score);
+                this.fitness = this.score * 1000 + this.steps;
                 if(death) death();
                 return;
             }
