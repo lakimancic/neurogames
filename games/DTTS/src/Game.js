@@ -31,17 +31,10 @@ export default class Game {
 
     async load() {
 
-        this.sprites['background'] = await loadImage('./assets/background.png');
+        this.sprites['border'] = await loadImage('./assets/border.png');
         this.sprites['bird'] = await loadImage('./assets/bird.png');
-        this.sprites['ground'] = await loadImage('./assets/ground.png');
-        this.sprites['pipes'] = await loadImage('./assets/pipes.png');
-        this.sprites['getready'] = await loadImage('./assets/getready.png');
-        this.sprites['tap'] = await loadImage('./assets/tap.png');
-        this.sprites['bignums'] = await loadImage('./assets/big_numbers.png');
-        this.sprites['smallnums'] = await loadImage('./assets/small_numbers.png');
-        this.sprites['gameover'] = await loadImage('./assets/gameover.png');
-        this.sprites['panel'] = await loadImage('./assets/panel.png');
-        this.sprites['medals'] = await loadImage('./assets/medals.png');
+        this.sprites['spike'] = await loadImage('./assets/spike.png');
+        this.sprites['numbers'] = await loadImage('./assets/numbers.png');
 
         this.isLoaded = true;
     }

@@ -7,8 +7,6 @@ const loadImage = (url) => new Promise((res,err) => {
     }
 });
 
-import GameState from "./GameState.js";
-
 // Game class
 export default class Game {
     /**
