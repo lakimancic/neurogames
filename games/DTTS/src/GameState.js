@@ -80,16 +80,6 @@ export default class GameState {
         );
         this.ctx.fill();
 
-        // this.ctx.globalCompositeOperation = "xor";
-        // this.ctx.drawImage(
-        //     this.sprites.numbers,
-        //     this.sprites.numbers.width * 2 / 10, 0,
-        //     this.sprites.numbers.width / 10 - 4, this.sprites.numbers.height,
-        //     this.canvas.width / 2 - this.sprites.numbers.width / 10 * this.scale / 2, 
-        //     this.canvas.height * 0.45 - this.sprites.numbers.height * this.scale / 2,
-        //     this.sprites.numbers.width / 10 * this.scale, this.sprites.numbers.height * this.scale
-        // );
-
         this.renderScore();
 
         this.ctx.globalCompositeOperation = "source-over";

@@ -72,10 +72,27 @@ body {
         position: relative;
 
         .fa-solid {
+            z-index: 101;
+        }
+
+        .fa-moon, .fa-sun {
             position: absolute;
 
             top: 0;
             right: 0;
+
+            padding: 1rem;
+
+            font-size: 3rem;
+
+            cursor: pointer;
+        }
+
+        .fa-expand {
+            position: absolute;
+
+            top: 0;
+            right: 5rem;
 
             padding: 1rem;
 
@@ -184,6 +201,17 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
+
+        &.fullscreen {
+            background-color: $color-dark-1-90;
+
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            width: 100vw;
+            height: 100vh;
+        }
 
         #myCanvas {
             background-color: white;

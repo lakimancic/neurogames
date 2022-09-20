@@ -16,8 +16,11 @@ ctx.webkitImageSmoothingEnabled = false;
 ctx.mozImageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
-window.onresize = () => {
+const updateSize = () => {
     let HEIGHT = Math.min(main.clientHeight * 0.9, main.clientWidth * 0.9 / aspectRatio);
+    if(main.classList.contains('fullscreen')) {
+        HEIGHT = Math.min(main.clientHeight, main.clientWidth / aspectRatio);
+    }
     let WIDTH = HEIGHT * aspectRatio;
 
     canvas.height = HEIGHT;
@@ -26,6 +29,22 @@ window.onresize = () => {
     ctx.webkitImageSmoothingEnabled = false;
     ctx.mozImageSmoothingEnabled = false;
     ctx.imageSmoothingEnabled = false;
+};
+
+window.onresize = () => {
+    updateSize();
+};
+
+document.querySelector('.fa-expand').onclick = () => {
+    main.classList.toggle('fullscreen');
+
+    if(main.classList.contains('fullscreen')) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+
+    updateSize();
 };
 
 import Game from './src/Game.js';
