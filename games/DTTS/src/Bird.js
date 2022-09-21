@@ -146,6 +146,7 @@ export default class Bird {
             ) {
                 this.alive = false;
             }
+            this.fitness += dt;
         }
 
         if(this.y < this.sprites.border.height - consts.GND_DOWN) {

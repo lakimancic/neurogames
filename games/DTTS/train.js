@@ -53,15 +53,14 @@ window.onresize = () => {
 };
 
 import Game from './src/Game.js';
-// import TrainState from './src/TrainState.js';
-import GameState from './src/GameState.js';
+import TrainState from './src/TrainState.js';
 
 let game = new Game(canvas, ctx);
 
 const runGame = async () => {
     await game.load();
 
-    game.state = new GameState(game.canvas, game.ctx, game.sprites, game.pressedKeys, nnCanvas, nnCtx, gaCanvas, gaCtx);
+    game.state = new TrainState(game.canvas, game.ctx, game.sprites, game.pressedKeys, nnCanvas, nnCtx, gaCanvas, gaCtx);
     game.run();
 };
 

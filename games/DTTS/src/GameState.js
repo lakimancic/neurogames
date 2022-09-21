@@ -241,7 +241,7 @@ export default class GameState {
                         this.bird.score--;
                     }
                 }
-            })
+            });
         }
 
         if(this.bird.score !== prevScore) {
