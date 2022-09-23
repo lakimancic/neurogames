@@ -48,16 +48,50 @@
     <hr/>
     <h3>🧬 Genetic Algorithm 🧬</h3>
     <div align="left">
-      Genetic Algorithm is used for training Neural Networks of individuals.
+      Genetic Algorithm is used for training Neural Network of each individual.
     </div>
     <h4>
-      Available Parent Selection Methods
+      👪 Available Parent Selection Methods 👪
     </h4>
     <ul align="left">
         <li>Roulette Wheel Selection</li>
         <li>Stochastic Universal Sampling</li>
         <li>Tournament Selection</li>
         <li>Random Selection</li>
+    </ul>
+    <h4>
+    👨‍🔬 Available Survivors Selection Methods 👨‍🔬
+    </h4>
+    <ul align="left">
+        <li>Age Based Selection</li>
+        <li>Fitness Based Selection</li>
+    </ul>
+    <h4>
+    🔀 Available Crossover Methods 🔀
+    </h4>
+    <ul align="left">
+        <li>One Point Crossover</li>
+        <li>Multi Point Crossover</li>
+        <li>Uniform Crossover</li>
+        <li>Arithmetic Crossover</li>
+    </ul>
+    <h4>
+    🧬 Available Crossover Methods 🧬
+    </h4>
+    <ul align="left">
+        <li>Random Resetting</li>
+        <li>Random Addition</li>
+        <li>Additive Inverse</li>
+    </ul>
+  </div>
+  <div align="center">
+    <hr/>
+    <h3>🕙 Future Plans 🕙</h3>
+    <ul align="left">
+        <li>Adding more <b>Activation Functions</b>, <b>Parent Selection</b>, <b>Survivors Selection</b>, <b>Crossover</b> and <b>Mutation Methods</b></li>
+        <li>Replacing or upgrading current Neural Networks with fixed topologies to Neural Networks with augmenting topologies and adding <b>NEAT ( Neuroevolution of Augmenting Topologies )</b>.</li>
+        <li><b>Code Refactoring</b> or <b>Code Rewriting</b></li>
+        <li>Adding <b>Backend System</b> and <b>Database Storage</b>.</li>
     </ul>
   </div>
 </div>

@@ -61,8 +61,8 @@ export default class TrainState {
         if(!this.saveObj.saveFiles) this.saveObj.saveFiles = [];
 
         this.neuralNet = [
-            { size: 4 },
-            { size: 6, activation: 'sigmoid' },
+            { size: 6 },
+            { size: 4, activation: 'sigmoid' },
             { size: 1, activation: 'relu' }
         ];
 
@@ -232,8 +232,18 @@ export default class TrainState {
                 // consts.GND_UP - consts.SPIKE_W * 0.9 + (i + 1) * consts.SPIKE_GAP * 0.9 + i * consts.SPIKE_H * 0.9 = d
                 // i * ( SPIKE_GAP + SPIKE_H ) * 0.9 + SPIKE_GAP * 0.9 - SPIKE_W * 0.9 + GND_UP
                 let ind = Math.floor((bird.y - consts.GND_UP + consts.SPIKE_W * 0.9 - consts.SPIKE_GAP * 0.9) / ( consts.SPIKE_GAP + consts.SPIKE_H ));
-                if(!this.spikes) inputs.push(0);
-                else inputs.push(this.spikes[ind] ? 1 : 0);
+                if(!this.spikes) {
+                    inputs.push(0);
+                    inputs.push(0);
+                    inputs.push(0);
+                }
+                else{
+                    if(ind > 0) inputs.push(this.spikes[ind-1] ? 1 : 0);
+                    else inputs.push(1);
+                    inputs.push(this.spikes[ind] ? 1 : 0);
+                    if(ind < 11) inputs.push(this.spikes[ind+1] ? 1 : 0);
+                    else inputs.push(1);
+                }
 
                 let outputs = bird.brain.feedForward(inputs);
                 let comparator = undefined;
