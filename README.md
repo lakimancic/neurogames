@@ -91,7 +91,8 @@
         <li>Adding more <b>Activation Functions</b>, <b>Parent Selection</b>, <b>Survivors Selection</b>, <b>Crossover</b> and <b>Mutation Methods</b></li>
         <li>Replacing or upgrading current Neural Networks with fixed topologies to Neural Networks with augmenting topologies and adding <b>NEAT ( Neuroevolution of Augmenting Topologies )</b>.</li>
         <li><b>Code Refactoring</b> or <b>Code Rewriting</b></li>
-        <li>Adding <b>Backend System</b> and <b>Database Storage</b>.</li>
+        <li>Adding <b>Backend System</b> and <b>Database Storage</b></li>
+        <li>Adding more <b>Games</b></li>
     </ul>
   </div>
 </div>

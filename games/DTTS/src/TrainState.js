@@ -61,8 +61,8 @@ export default class TrainState {
         if(!this.saveObj.saveFiles) this.saveObj.saveFiles = [];
 
         this.neuralNet = [
-            { size: 6 },
-            { size: 4, activation: 'sigmoid' },
+            { size: 2 },
+            { size: 5, activation: 'sigmoid' },
             { size: 1, activation: 'relu' }
         ];
 
@@ -222,28 +222,45 @@ export default class TrainState {
         this.population.forEach(bird => {
             if(bird.alive) {
                 let inputs = [];
-
-                inputs.push(bird.y - consts.GND_UP);
-                inputs.push(this.sprites.border.height - consts.GND_DOWN - bird.y);
                 
                 if(bird.vx >= 0) inputs.push(this.sprites.border.width - consts.WALL - bird.x);
                 else inputs.push(bird.x - consts.WALL);
 
                 // consts.GND_UP - consts.SPIKE_W * 0.9 + (i + 1) * consts.SPIKE_GAP * 0.9 + i * consts.SPIKE_H * 0.9 = d
                 // i * ( SPIKE_GAP + SPIKE_H ) * 0.9 + SPIKE_GAP * 0.9 - SPIKE_W * 0.9 + GND_UP
-                let ind = Math.floor((bird.y - consts.GND_UP + consts.SPIKE_W * 0.9 - consts.SPIKE_GAP * 0.9) / ( consts.SPIKE_GAP + consts.SPIKE_H ));
-                if(!this.spikes) {
-                    inputs.push(0);
-                    inputs.push(0);
-                    inputs.push(0);
+                let new_spikes = [];
+                if(this.spikes.length > 0) {
+                    let si = null, prev = -1;
+                    for(let i=1;i<11;i++) {
+                        if(this.spikes[i] != prev) {
+                            if(si != null) {
+                                if(prev == false) {
+                                    let sd = consts.GND_UP - consts.SPIKE_W * 0.9 + (si + 1) * consts.SPIKE_GAP * 0.9 + si * consts.SPIKE_H * 0.9;
+                                    let fd = consts.GND_UP - consts.SPIKE_W * 0.9 + i * consts.SPIKE_GAP * 0.9 + (i - 1) * consts.SPIKE_H * 0.9;
+                                    new_spikes.push((sd + fd ) / 2);
+                                }
+                            }
+                            prev = this.spikes[i];
+                            si = i;
+                        }
+                    }
+                    if(prev == false) {
+                        let sd = consts.GND_UP - consts.SPIKE_W * 0.9 + (si + 1) * consts.SPIKE_GAP * 0.9 + si * consts.SPIKE_H * 0.9;
+                        let fd = consts.GND_UP - consts.SPIKE_W * 0.9 + 11 * consts.SPIKE_GAP * 0.9 + 10 * consts.SPIKE_H * 0.9;
+                        new_spikes.push((sd + fd ) / 2);
+                    }
+                } else {
+                    let sd = consts.GND_UP - consts.SPIKE_W * 0.9 + 2 * consts.SPIKE_GAP * 0.9 + 1 * consts.SPIKE_H * 0.9;
+                    let fd = consts.GND_UP - consts.SPIKE_W * 0.9 + 11 * consts.SPIKE_GAP * 0.9 + 10 * consts.SPIKE_H * 0.9;
+                    new_spikes.push((sd + fd ) / 2);
                 }
-                else{
-                    if(ind > 0) inputs.push(this.spikes[ind-1] ? 1 : 0);
-                    else inputs.push(1);
-                    inputs.push(this.spikes[ind] ? 1 : 0);
-                    if(ind < 11) inputs.push(this.spikes[ind+1] ? 1 : 0);
-                    else inputs.push(1);
-                }
+                let mn = 1000000;
+                new_spikes.forEach(i => {
+                    if(Math.abs(bird.y - i) < Math.abs(bird.y - mn)) {
+                        mn = i;
+                    }
+                });
+                inputs.push(bird.y - mn);
 
                 let outputs = bird.brain.feedForward(inputs);
                 let comparator = undefined;
