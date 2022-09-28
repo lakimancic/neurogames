@@ -47,16 +47,16 @@ document.querySelector('.fa-expand').onclick = () => {
     updateSize();
 };
 
-// import Game from './src/Game.js';
-// import GameState from './src/GameState.js';
+import Game from './src/Game.js';
+import GameState from './src/GameState.js';
 
-// let game = new Game(canvas, ctx);
+let game = new Game(canvas, ctx);
 
-// const runGame = async () => {
-//     await game.load();
+const runGame = async () => {
+    await game.load();
 
-//     game.state = new GameState(game.canvas, game.ctx, game.sprites, game.pressedKeys);
-//     game.run();
-// };
+    game.state = new GameState(game.canvas, game.ctx, game.sprites, game.pressedKeys);
+    game.run();
+};
 
-// runGame();
+runGame();

@@ -72,6 +72,13 @@ export default class TrainState {
         this.resetNeuroEvolution();
     }
 
+    init() {
+        this.gameOn = false;
+        this.gameOver = false;
+
+
+    }
+
     resetNeuroEvolution() {
         this.gameOn = false;
         this.gameOver = false;
@@ -323,12 +330,68 @@ export default class TrainState {
         this.paused = false;
         this.gameOn = false;
 
-        // this.population.forEach(i => i.restart(50, (this.sprites.background.height - this.sprites.ground.height) / 2));
+        this.population.forEach(i => i.restart(19, 12));
     }
 
     reset() {
         this.paused = false;
         this.resetNeuroEvolution();
+    }
+
+    save(filename) {
+        let ind = this.saveObj.saveFiles.findIndex(i => i.filename === filename);
+
+        if(ind !== -1) this.saveObj.saveFiles[ind] = {
+            filename: filename,
+            population: this.population.map(i => JSON.parse(JSON.stringify(i.brain))),
+            generation: this.generation,
+            highscore: this.highscore,
+            time: this.time,
+            evolution: this.evolution,
+            neuralNet: this.neuralNet.map(i => JSON.parse(JSON.stringify(i))),
+            data: this.data.map(i => JSON.parse(JSON.stringify(i)))
+        }
+        else this.saveObj.saveFiles.push({
+            filename: filename,
+            population: this.population.map(i => JSON.parse(JSON.stringify(i.brain))),
+            generation: this.generation,
+            highscore: this.highscore,
+            time: this.time,
+            evolution: this.evolution,
+            neuralNet: this.neuralNet.map(i => JSON.parse(JSON.stringify(i))),
+            data: this.data.map(i => JSON.parse(JSON.stringify(i)))
+        });
+
+        localStorage.setItem('snakegame', JSON.stringify(this.saveObj));
+        this.saveObj = JSON.parse(JSON.stringify(this.saveObj));
+    }
+
+    load(filename) {
+        let saveFileObj = this.saveObj.saveFiles.find(i => i.filename === filename);
+
+        this.neuralNet = [];
+
+        saveFileObj.neuralNet.forEach(i => {
+            this.neuralNet.push({...i});
+        });
+
+        this.evolution = {...saveFileObj.evolution};
+
+        this.reset();
+
+        this.generation = saveFileObj.generation;
+        this.highscore = saveFileObj.highscore;
+        this.time = saveFileObj.time;
+
+        this.data = [];
+
+        saveFileObj.data.forEach(i => {
+            this.data.push({...i});
+        });
+
+        saveFileObj.population.forEach((i, ind) => {
+            this.population[ind].brain.set(i);
+        });
     }
 
     visualizeChart() {
